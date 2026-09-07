@@ -1,11 +1,17 @@
 # Session handoff — start here
 
-This directory preserves the September 6–7, 2026 session between Tor Shepherd
+This directory preserves the September 6–7, 2026 experiments between Tor Shepherd
 and Codex. It is working material for future collaborators. The root
 [README](../README.md) and [NOTES](../NOTES.md) remain the reader-facing tour.
 
-The session is parked. **The zero-storage owning vector was not achieved and
-is tabled.** Do not resume that search automatically. No transcription,
+**Latest work:** [Cache memory](06-cache-memory.md) resumes the project with a
+writable integer dictionary in GCC's constexpr memoization cache. It records the
+new dictionary and singleton vector spells, checks, limitations, and possible
+next applications. Documents 01–05
+preserve the original session handoff below.
+
+**The zero-storage owning vector was not achieved and is tabled.**
+Do not resume that search automatically. No transcription,
 compiler-bug report, or scheduled recheck is pending in the background.
 
 ## Read in this order
@@ -21,8 +27,10 @@ compiler-bug report, or scheduled recheck is pending in the background.
    these pieces did not produce an empty vector.
 5. [Reproduction and handoff](05-reproduction-and-handoff.md): verification history,
    compiler settings, editable links, and how to resume without repeating work.
+6. [Cache memory](06-cache-memory.md): extending cached membership to overwritable
+   64-bit values and a singleton vector, stale reads and writes, and verification.
 
-## State at the handoff
+## State at the original handoff
 
 | Construction | Observed result | Location |
 | --- | --- | --- |

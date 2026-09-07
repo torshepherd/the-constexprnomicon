@@ -19,8 +19,10 @@ point for these experiments.
 | [One-pointer vector](one-pointer-vector.cpp) | The evaluator remembers size and capacity through union lifetimes. | GCC 16.2, Clang 22.1.0 |
 | [Empty bits](empty-bits.cpp) | An empty class carries 64 writable logical bits in its base lifetimes. | Clang 22.1.0 |
 | [Cache counter](cache-counter.cpp) | GCC's constexpr memoization cache becomes the counter's storage. | GCC 16.2 |
+| [Cache memory](cache-memory.cpp) | An append-only cache becomes a writable dictionary across constant evaluations. | GCC 13.3, GCC 16.2 |
+| [Cache vector](cache-vector.cpp) | An empty, const global handle can push, pop, and overwrite elements in compiler storage. | GCC 13.3, GCC 16.2 |
 
-Each file stands alone and carries its own `static_assert` checks. All three use
+Each file stands alone and carries its own `static_assert` checks. The spells use
 C++23 with compiler extensions; none uses reflection. These are experiments in
 compiler behavior, with the relevant assumptions recorded in
 [the notes](NOTES.md).
@@ -36,6 +38,8 @@ To check a file locally with the listed compiler:
 g++-16 -std=c++23 -O2 -c one-pointer-vector.cpp -o /tmp/one-pointer-vector.o
 clang++-22 -std=c++23 -O2 -c empty-bits.cpp -o /tmp/empty-bits.o
 g++-16 -std=c++23 -O2 -c cache-counter.cpp -o /tmp/cache-counter.o
+g++-16 -std=c++23 -O2 -c cache-memory.cpp -o /tmp/cache-memory.o
+g++-16 -std=c++23 -O2 -c cache-vector.cpp -o /tmp/cache-vector.o
 ```
 
 Compiler executable names depend on your installation. Recorded checks passed
