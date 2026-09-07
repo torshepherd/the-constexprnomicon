@@ -204,6 +204,16 @@ The complete standalone file passes GCC 13.3.0 and GCC 16.2 at C++23 `-O0` and
 [session notes](working-notes/06-cache-memory.md#the-singleton-vector) for its
 source hash and verification details.
 
+## Typed cache experiments
+
+The cache's 64-bit value restriction is a choice of encoding. Follow-up
+[typed experiments](working-notes/07-typed-cache.md) passed on GCC 16.2 with
+double, enum, and 24-byte struct values, and with an owning `std::string`
+serialized as length and characters. The selected root dictionary/vector still
+use unsigned 64-bit values. The broader sketches require values that can be
+encoded and reconstructed in constant evaluation; raw byte encoding does not
+automatically handle padding, pointers, or arbitrary object identity.
+
 ## Related work and provenance
 
 The constructions were developed and tested during the conversation. A targeted

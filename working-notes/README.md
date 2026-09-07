@@ -4,7 +4,11 @@ This directory preserves the September 6–7, 2026 experiments between Tor Sheph
 and Codex. It is working material for future collaborators. The root
 [README](../README.md) and [NOTES](../NOTES.md) remain the reader-facing tour.
 
-**Latest work:** [Cache memory](06-cache-memory.md) resumes the project with a
+**Latest follow-up:** [Typed cache values](07-typed-cache.md) tests a generic
+byte encoding, an owning-string content encoding, and structured cache keys.
+The root dictionary/vector spells still use unsigned 64-bit values.
+
+[Cache memory](06-cache-memory.md) resumed the project with a
 writable integer dictionary in GCC's constexpr memoization cache. It records the
 new dictionary and singleton vector spells, checks, limitations, and possible
 next applications. Documents 01–05
@@ -29,6 +33,8 @@ compiler-bug report, or scheduled recheck is pending in the background.
    compiler settings, editable links, and how to resume without repeating work.
 6. [Cache memory](06-cache-memory.md): extending cached membership to overwritable
    64-bit values and a singleton vector, stale reads and writes, and verification.
+7. [Typed cache values](07-typed-cache.md): tested encodings beyond integers,
+   owning strings, structured keys, and the boundary around arbitrary objects.
 
 ## State at the original handoff
 
