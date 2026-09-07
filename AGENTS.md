@@ -2,6 +2,11 @@
 
 This is a collection of small, artistic compile-time C++ experiments.
 
+For session history and research handoff, start at
+[working-notes/README.md](working-notes/README.md). It links the decisions,
+successful and unsuccessful probes, compiler evidence, and shelved work.
+Keep research logs there; keep the root README for readers of the spells.
+
 - Reduce each trick to its essence. Favor concise, deliberate expressions when
   they clarify the trick; complexity should come from the idea.
 - Keep each spell standalone. Put the code before its compile-time checks, and
