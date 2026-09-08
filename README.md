@@ -22,6 +22,7 @@ point for these experiments.
 | [Cache memory](cache-memory.cpp) | An append-only cache becomes a writable dictionary across constant evaluations. | GCC 13.3, GCC 16.2 |
 | [Cache vector](cache-vector.cpp) | An empty, const global handle can push, pop, and overwrite elements in compiler storage. | GCC 13.3, GCC 16.2 |
 | [Copy gate](copy-gate.cpp) | A copy constructor sorts a template argument; an unconstrained overload accepts only already-sorted words. | GCC 13.3 |
+| [Last rites](last-rites.cpp) | Temporary destructors run backpropagation: the semicolon differentiates an expression. | GCC 13.3, GCC 16.2 |
 
 Each file stands alone and carries its own `static_assert` checks. The spells use
 C++23 and depend on compiler behavior; none uses reflection. These are experiments in
@@ -61,8 +62,9 @@ g++-16 -std=c++23 -O2 -c cache-counter.cpp -o /tmp/cache-counter.o
 g++-16 -std=c++23 -O2 -c cache-memory.cpp -o /tmp/cache-memory.o
 g++-16 -std=c++23 -O2 -c cache-vector.cpp -o /tmp/cache-vector.o
 g++-13 -std=c++23 -O2 -c copy-gate.cpp -o /tmp/copy-gate.o
+g++-16 -std=c++23 -O2 -c last-rites.cpp -o /tmp/last-rites.o
 ```
 
-Compiler executable names depend on your installation. Recorded checks passed
-at both `-O0` and `-O2` on the versions above; changes to evaluators or their
-limits can change the outcome.
+Compiler executable names depend on your installation. The notes record each
+spell's checked versions and optimization levels; changes to evaluators or
+their limits can change the outcome.

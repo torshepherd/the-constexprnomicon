@@ -10,7 +10,13 @@ iteration, memory, and selection/conditional logic. It also covers isolation,
 allowed operations, and the distinction between internal value extraction and
 observing the final result.
 
-**Latest work:** [Copy gate](09-copy-gate.md) starts a new research direction:
+**Latest work:** [Last rites](11-last-rites.md) uses temporary destruction as the
+reverse traversal for automatic differentiation. It records the standalone
+spell, the full-expression boundary, GCC checks, and an unresolved Clang
+constant-evaluator disagreement. Tor explicitly requested a direction away
+from the copy/template-argument work; that investigation was left alone.
+
+[Copy gate](09-copy-gate.md) started the preceding research direction:
 changing copy constructors of class-valued template arguments turn overload
 viability into a test for normalization. It records the standalone sorting gate,
 copy-driven factorial deduction, compiler controls, prior art, and the relevant
@@ -67,6 +73,10 @@ compiler-bug report, or scheduled recheck is pending in the background.
    deeper cache settings, codecs, proxy swaps, and compile-time sorting.
 9. [Copy gate](09-copy-gate.md): template-argument copying, normalization as an
    overload filter, copy-driven recursion, and current-instantiation traps.
+10. [Transcription attempt](10-static-antics-transcription.md): local Whisper
+    setup worked; the recording could not be downloaded.
+11. [Last rites](11-last-rites.md): destruction schedules reverse-mode
+    differentiation, with GCC evidence and the Clang lifetime control.
 
 ## State at the original handoff
 
