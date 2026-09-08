@@ -19,28 +19,18 @@ recorded as a separate historical experiment, not advertised as a C++23 spell.
 
 ## Terminology: roughly-Turing
 
-Tor's personal definition, supplied during the copy-gate follow-up:
+This definition and the rules for applying it now live in
+[Pedantics.md](Pedantics.md), in Tor's own words. His isolation requirement is
+part of the claim: identify the allowed operations and keep the computation
+within them, including intermediate storage and recovery of values.
+His definition requires recursion or iteration, memory, and selection /
+conditional logic within that allowed set.
 
-> has either recursion or iteration and memory
-
-Read this as **(recursion or iteration) + memory**. Use this definition when
-assessing whether a spell is roughly-Turing. It is a practical exploration
-criterion; do not silently replace it with a proof of formal Turing completeness
-or an additional requirement for unbounded storage. Memory can be state carried
-between successive instantiations; it need not be a mutable global object.
-
-Name the mechanism supplying each ingredient, including any use of constexpr
-evaluation, template instantiation, return-type deduction, or overload matching.
-The combined program satisfying the criterion does not establish that each of
-those mechanisms independently does so.
-
-Tor also reports earlier work establishing computational power in template
-argument deduction and exploring overload resolution, with a recursion obstacle
-in the latter. His correction was: “TAD is but OVL is not quite”. The earlier
-construction and exact restrictions have not been recovered in this session;
-preserve that distinction without claiming the obstacle has been diagnosed or
-solved. The [copy-gate assessment](09-copy-gate.md#roughly-turing-assessment)
-applies his definition to the experiments we actually have.
+The earlier affirmative assessment of the copy-driven factorial was too broad.
+The [corrected assessment](09-copy-gate.md#roughly-turing-assessment) identifies
+the extra techniques it uses. Pedantics.md also preserves Tor's account of his
+earlier TAD/overload-resolution work, the CTAD extraction cheat, and the possible
+future CTAD-only approach.
 
 ## How the session developed
 

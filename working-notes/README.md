@@ -4,6 +4,12 @@ This directory preserves the September 6–8, 2026 experiments between Tor Sheph
 and Codex. It is working material for future collaborators. The root
 [README](../README.md) and [NOTES](../NOTES.md) remain the reader-facing tour.
 
+**Read [Pedantics.md](Pedantics.md) before assessing computational power.** It
+preserves Tor's instructions verbatim: roughly-Turing requires recursion or
+iteration, memory, and selection/conditional logic. It also covers isolation,
+allowed operations, and the distinction between internal value extraction and
+observing the final result.
+
 **Latest work:** [Copy gate](09-copy-gate.md) starts a new research direction:
 changing copy constructors of class-valued template arguments turn overload
 viability into a test for normalization. It records the standalone sorting gate,
@@ -15,11 +21,11 @@ matching uses structural template-argument equivalence independently of
 `operator==`. Tor's requested [“secret equality” follow-up](09-copy-gate.md#follow-up-the-compilers-secret-equality)
 is recorded as a separate future research direction.
 
-Tor's definition of [roughly-Turing](01-context-and-decisions.md#terminology-roughly-turing)
-is “has either recursion or iteration and memory”. The
-[assessment](09-copy-gate.md#roughly-turing-assessment) explains why the
-copy-driven recursive computation meets it, and which ingredients come from
-instantiation, constexpr copying, and template argument state.
+The [corrected assessment](09-copy-gate.md#roughly-turing-assessment) withdraws
+the earlier “yes” as an answer to the isolated-technique question: the
+copy-driven factorial's decisions use `if constexpr`. The source still
+compiles, but a machine restricted to
+“hidden copy plus overload resolution” remains unproven.
 
 [Sortable cache vector](08-sortable-cache-vector.md) preserves
 the small root spells and adds an advanced codec/iterator application, with
@@ -60,7 +66,7 @@ compiler-bug report, or scheduled recheck is pending in the background.
 8. [Sortable cache vector](08-sortable-cache-vector.md): local access identities,
    deeper cache settings, codecs, proxy swaps, and compile-time sorting.
 9. [Copy gate](09-copy-gate.md): template-argument copying, normalization as an
-   overload filter, deduction-only recursion, and current-instantiation traps.
+   overload filter, copy-driven recursion, and current-instantiation traps.
 
 ## State at the original handoff
 

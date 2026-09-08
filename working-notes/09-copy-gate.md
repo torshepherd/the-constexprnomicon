@@ -119,6 +119,9 @@ Tor requested this separate future research direction:
 The question is whether template-argument equivalence itself can supply another
 small, surprising primitive, independently of the copy gate's normalization.
 Keep it as a future exploration, not a claimed discovery or a running task.
+Apply Tor's [Pedantics](Pedantics.md) when choosing the allowed operations for
+that exploration; equality alone and hidden copying plus overload resolution
+are different proposed sets.
 
 Possible starting questions, not verified results from this session:
 
@@ -138,60 +141,58 @@ reopen the tabled zero-storage owning-vector investigation.
 
 ## Roughly-Turing assessment
 
-Tor defines roughly-Turing as:
+**Correction after Tor's isolation clarification.** The definition and the
+instructions for applying it are preserved verbatim in [Pedantics.md](Pedantics.md).
+The criterion requires recursion or iteration, memory, and selection /
+conditional logic, all within the chosen allowed operations.
+The earlier “yes” counted recursion and memory in a program combining several
+techniques. That does not answer Tor's intended question about a machine within
+a chosen minimal set of operations.
 
-> has either recursion or iteration and memory
+The saved factorial is a working mixed-technique computation. It does not
+establish a roughly-Turing win for hidden copying alone, or for the proposed
+set “hidden copy plus overload resolution”. Its operations include:
 
-The durable terminology and his earlier TAD/overload-resolution context are in
-[Context and decisions](01-context-and-decisions.md#terminology-roughly-turing).
-
-**Yes: the copy-driven return-type computation below meets that definition on
-the tested GCC.** The factorial example already supplies both ingredients:
-
-| Ingredient | Where it comes from |
+| Operation | Mechanism used by the saved factorial |
 | --- | --- |
-| Recursion | Deducing the return type repeatedly instantiates `factorial<P>()`; each forwarded copy supplies the next specialization. |
-| Memory | `P.n` and `P.value` carry the remaining count and accumulated product from one step to the next. |
-| State update | The constexpr copy constructor computes `(n, value) -> (n - 1, value * n)`. |
-| Stopping condition | `if constexpr (P.n)` selects another step or the terminal result type. |
+| Storage | Class-valued template argument fields retain the remaining count and accumulated product. |
+| Internal recovery of state | Member reads such as `P.n`, `p.n`, and `p.value`. |
+| State update | Ordinary constexpr arithmetic inside the copy constructor. |
+| Decision and termination | `if constexpr (P.n)` chooses another step or the result. |
+| Recursive drive | Template instantiation and return-type deduction through `factorial<P>()`. |
 
-For `factorial<5>()`, the successive states are `(5, 1)`, `(4, 5)`, `(3, 20)`,
-`(2, 60)`, `(1, 120)`, and `(0, 120)`. These are successive template parameter
-values; the program does not mutate one shared parameter object. The result is
-available through `decltype` without executing `factorial`. The copy constructor
-and branch conditions still undergo constant evaluation. Calling this
-deduction-only describes how the function is used, not an absence of constexpr
-computation throughout the program.
+Tor specifically identifies `if constexpr` as an extra technique doing the
+conditioning. Hidden copying does not supply that selection. Hiding ordinary
+constexpr work inside a constructor also does not establish that copying alone
+expresses all the program's operations. Merely using the function inside
+`decltype` is not sufficient to call the computation deduction-only under his
+instructions.
 
-Scope matters for the other constructions:
+The final `decltype(factorial<5>())::value` assertion observes the result.
+Tor's distinction permits a different technique at that final boundary; it
+does not excuse intermediate member reads or branching by a separate mechanism.
+The decisive extra conditioning here happens inside the computation, before
+the final observation.
 
-- The whole sorting-gate example also contains iteration and memory inside its
-  constexpr `std::sort` and character array. In that literal sense it meets
-  Tor's criterion, but those ingredients come from ordinary constexpr code
-  invoked during template argument construction.
-- The gate's overload decision tests whether copying preserves the argument.
-  It does not repeatedly apply the copy transformation until it finds a fixed
-  point. The sorting constructor performs its own work before type matching.
-- Structural template-argument equivalence alone has not supplied a separate
-  programmable loop and carried state in these probes. The recursive wording
-  of its member-comparison rules is not itself evidence of such a programming
-  mechanism. That remains part of the “secret equality” follow-up.
+“Hidden copy plus overload resolution” can be an explicitly chosen set to
+investigate. The sorting gate demonstrates a selection mechanism on the tested
+GCC, but a complete machine with recursion within that set has not been shown.
+The saved sorting constructor calls `std::sort`; that ordinary algorithm is
+another computational ingredient to account for, not evidence that the gate
+itself supplies iteration. Likewise, the inheritance and specialization probes
+below do not solve the restricted problem: specialization would add another
+technique. The final allowed primitive operations must be defined before
+claiming a win.
 
-The demonstrated recursive construction combines **template instantiation and
-return-type deduction for control, constexpr copying for transitions, and
-class-valued template arguments for memory**. Its recursive call explicitly
-supplies `P`; this is not a demonstration that ordinary function-template
-argument deduction or overload resolution alone supplies the whole machine.
-[C++23's placeholder-type rules](https://timsong-cpp.github.io/cppwp/n4950/dcl.spec.auto)
-explain why determining the return type can require instantiating the body.
-No claim is made that this resolves Tor's earlier overload-only recursion
-obstacle; the restrictions and failed example for that work are not available
-here.
+Structural template-argument equivalence on its own also remains an open
+research direction. None of these probes establishes an isolated programmable
+loop and state recovery through that operation. Nor has Tor's earlier
+overload-only recursion obstacle been diagnosed or solved.
 
-This assessment uses the already-verified factorial and sorting-gate programs;
-no new compiler runs were needed for it. It asserts Tor's practical criterion,
-not a proof of formal universality. The finite integers and compiler limits of
-the saved examples, and the changing-copy standard caveat below, still apply.
+This correction changes the classification, not the saved compiler results.
+The factorial and sorting-gate sources remain useful observed behavior on GCC
+13.3, with the documented changing-copy standard caveat. No new compiler runs
+were needed for this documentation correction.
 
 ## Prior art and standard boundary
 
@@ -278,6 +279,8 @@ different specialization on this GCC. Template instantiation drives the loop;
 constant evaluation still executes the constructors and branch conditions.
 The tested input range avoids negative counts and integer overflow. Do not
 confuse this with an arbitrary runtime function becoming constant-evaluable.
+This is an unevaluated use of a mixed-technique program, not a deduction-only
+win under [Pedantics.md](Pedantics.md); see the corrected assessment above.
 
 Scratch source hash (including its whitespace):
 `f0e7a9eab85700dfeb9205ab3210546d8bc3f86ba5e2b2012dd66cdf8d68238c`.

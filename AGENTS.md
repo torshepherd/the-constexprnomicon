@@ -7,6 +7,11 @@ For session history and research handoff, start at
 successful and unsuccessful probes, compiler evidence, and shelved work.
 Keep research logs there; keep the root README for readers of the spells.
 
+Read [working-notes/Pedantics.md](working-notes/Pedantics.md) before assessing a
+technique's computational power. It preserves Tor's verbatim instructions on
+roughly-Turing, isolation, allowed operations, and intermediate versus final
+value extraction.
+
 - Commit and push completed work directly to `main`; do not open pull requests
   for routine work in this repository. Tor explicitly prefers this workflow:
   nobody depends on the repository, and it is a collaborative experiment.
