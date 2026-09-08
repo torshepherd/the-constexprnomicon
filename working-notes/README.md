@@ -1,10 +1,16 @@
 # Session handoff — start here
 
-This directory preserves the September 6–7, 2026 experiments between Tor Shepherd
+This directory preserves the September 6–8, 2026 experiments between Tor Shepherd
 and Codex. It is working material for future collaborators. The root
 [README](../README.md) and [NOTES](../NOTES.md) remain the reader-facing tour.
 
-**Latest work:** [Sortable cache vector](08-sortable-cache-vector.md) preserves
+**Latest work:** [Copy gate](09-copy-gate.md) starts a new research direction:
+changing copy constructors of class-valued template arguments turn overload
+viability into a test for normalization. It records the standalone sorting gate,
+copy-driven factorial deduction, compiler controls, prior art, and the relevant
+standard wording. The cache and pointer investigations were not resumed.
+
+[Sortable cache vector](08-sortable-cache-vector.md) preserves
 the small root spells and adds an advanced codec/iterator application, with
 locally verified mutable sorting. Routine work now goes directly to `main`, as
 requested by Tor and recorded in `AGENTS.md`.
@@ -42,6 +48,8 @@ compiler-bug report, or scheduled recheck is pending in the background.
    owning strings, structured keys, and the boundary around arbitrary objects.
 8. [Sortable cache vector](08-sortable-cache-vector.md): local access identities,
    deeper cache settings, codecs, proxy swaps, and compile-time sorting.
+9. [Copy gate](09-copy-gate.md): template-argument copying, normalization as an
+   overload filter, deduction-only recursion, and current-instantiation traps.
 
 ## State at the original handoff
 
