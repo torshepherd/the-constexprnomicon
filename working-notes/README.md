@@ -3,6 +3,9 @@
 This directory preserves the September 6–8, 2026 experiments between Tor Shepherd
 and Codex. It is working material for future collaborators. The root
 [README](../README.md) and [NOTES](../NOTES.md) remain the reader-facing tour.
+The README separates standalone tricks from
+[roughly-Turing machine investigations](../MACHINES.md). That page tracks allowed
+mechanisms, demonstrated ingredients, and open completeness claims.
 
 **Read [Pedantics.md](Pedantics.md) before assessing computational power.** It
 preserves Tor's instructions verbatim: roughly-Turing requires recursion or

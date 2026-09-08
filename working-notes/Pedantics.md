@@ -22,6 +22,12 @@ roughly-Turing.
 
 > Also, of course, roughly-Turing has to have a method of selection/conditional logic
 
+## Ambiguity and the documentation split — verbatim
+
+> Oh wow ok that is totally ridiculous and I still don’t fully get it. But I noticed something in there: concepts allows us to condition on ambiguity. So hypothetically we could maybe do roughly-Turing-complete computation using that as our condition and recurse within there somewhere? And that allows us to implement arbitrary programs just with that technique?
+>
+> We should probably reformat the readme or documentation somehow to separate “standalone tricks” from “roughly Turing complete features in C++”, right?
+
 ## Current status — editorial, not a quotation
 
 The combined criterion is **(recursion or iteration) + memory + selection /
@@ -46,3 +52,10 @@ from observing the final result.
 
 The “secret equality” [research direction](09-copy-gate.md#follow-up-the-compilers-secret-equality)
 remains open under these instructions.
+
+The [reader-facing machine investigations](../MACHINES.md) now separate such
+claims from standalone tricks. Tor's ambiguity-driven recurrence proposal is an
+open research direction, not an assertion that False idols already implements
+an arbitrary-program machine. Its SAT decision and final observation have been
+tested; recurrence and evolving state within the proposed restricted mechanism
+have not.

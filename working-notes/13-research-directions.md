@@ -86,6 +86,12 @@ resource-limit failure must never be reinterpreted as an UNSAT answer.
 
 ## 4. The isolated-machine question remains open
 
+Tor subsequently identified ambiguity as a possible condition for a recursive
+machine and requested that the documentation distinguish standalone tricks from
+roughly-Turing-complete features. His message is preserved in
+[Pedantics.md](Pedantics.md); [MACHINES.md](../MACHINES.md) is now the reader-facing
+status page. The hypothesis has not yet been implemented or compiler-tested.
+
 Subsumption supplies a rich finite decision operation. The retained construction
 does not yet show evolving memory or unbounded recurrence inside that operation.
 
@@ -129,5 +135,6 @@ formula opacity, the missing guard, and the indexed atom, and are saved separate
    novelty claim. The first two do not establish the third.
 
 The user accepted False idols and explicitly authorized pushing the spell,
-README, working documents, and these research directions to `main`. No additional
-research direction has been selected or promised for automatic continuation.
+README, working documents, and these research directions to `main`. His subsequent
+ambiguity-driven machine proposal gives the recurrence investigation a concrete
+focus. The documentation split does not itself constitute a machine demonstration.

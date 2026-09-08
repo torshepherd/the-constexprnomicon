@@ -6,13 +6,25 @@ Small spells that reward contemplation. The aim is to reduce each trick to its
 essence: concise code, surprising behavior, and just enough explanation to see
 what the compiler is being persuaded to do.
 
+The collection has two lines of inquiry:
+
+- **[Standalone tricks](#standalone-tricks):** small constructions with surprising
+  behavior, such as an empty integer or a SAT oracle made of overload ambiguity.
+- **[Roughly-Turing-complete features](MACHINES.md):** investigations of whether
+  one precisely defined language mechanism supplies selection, memory, and
+  recurrence. Demonstrated ingredients and open machine claims are tracked
+  separately.
+
 Created by Tor Shepherd in collaboration with OpenAI's Codex. This is a new,
 independent companion to [sorcery-cpp](https://github.com/torshepherd/sorcery-cpp),
 which remains a historical artifact of the pre-AI era. Tor's
 [Static Antics](https://github.com/torshepherd/static_antics) provided the starting
 point for these experiments.
 
-## Spells
+## Standalone tricks
+
+Each entry demonstrates a particular capability. Inclusion here is not a claim
+that its underlying mechanism can express arbitrary programs.
 
 | Spell | The trick | Tested compiler |
 | --- | --- | --- |
@@ -39,7 +51,7 @@ static_assert(formula<int>);       // Every atom evaluates to true.
 static_assert(!satisfiable<int>);  // The encoded formula has no solution.
 ```
 
-## Advanced applications
+### Applications of standalone tricks
 
 [The sortable cache vector](advanced/cache-vector.cpp) keeps the small integer
 spells above intact and adds codecs, live proxies, and random-access iterators.
@@ -57,6 +69,19 @@ Checked on GCC 13.3.0 at `-O0` and `-O2`, with C++23 and
 `-fconstexpr-cache-depth=64`. The local handle and deeper cache are essential to
 the tested algorithm behavior. Read the [advanced notes](NOTES.md#sortable-cache-vector)
 before trying it; this is not an ordinary runtime container.
+
+## Roughly-Turing-complete features
+
+Can a language feature become a programming language of its own? Our criterion
+is selection, memory, and recursion or iteration within an explicit set of
+allowed operations. Reading the final answer is distinguished from using another
+mechanism to carry intermediate computation.
+
+The [machine investigations](MACHINES.md) track CTAD, hidden copy plus overload
+resolution, and ambiguity-driven computation. **No complete isolated machine is
+currently demonstrated by the examples tracked there.** False idols establishes
+a finite SAT oracle; whether ambiguity can also drive recurrence and evolving
+state is a separate, open question.
 
 ## Read the spells
 

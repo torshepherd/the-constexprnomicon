@@ -1,5 +1,10 @@
 # Notes on the spells
 
+This page explains the [standalone tricks](README.md#standalone-tricks).
+[Roughly-Turing machine investigations](MACHINES.md) separately track whether a
+restricted mechanism supplies selection, memory, and recurrence. A working trick
+is not automatically a demonstrated machine.
+
 Developed in a conversation between Tor Shepherd and Codex on 2026-09-07.
 Compiler Explorer targets: x86-64 GCC 16.2 (`g162`) and Clang 22.1.0
 (`clang2210`). The assertions in the root spell sources pass at
