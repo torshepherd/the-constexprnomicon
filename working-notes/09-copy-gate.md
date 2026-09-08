@@ -67,6 +67,75 @@ then sort; the full checks above bind the final reduced source.
 No Clang, newer-GCC, or Godbolt run was made. Do not generalize local acceptance.
 There is no pending compiler request or bug report.
 
+## Equality controls
+
+Tor asked whether GCC was deferring to an implicitly defaulted equality
+operator. We checked the complete selected source with four independent
+variants. All passed locally on Ubuntu GCC 13.3.0 with
+`-std=c++23 -O0 -Wall -Wextra -pedantic-errors -c`, retaining every original
+assertion, including the template-type identity checks.
+
+| Variant inside `letters` | Additional check | Result |
+| --- | --- | --- |
+| No equality operator, as in the selected source | A dependent requires-expression confirms `x == x` is unavailable | Pass |
+| `constexpr bool operator==(const letters&) const { return true; }` | `letters{"abc"} == letters{"cab"}` | Pass |
+| `constexpr bool operator==(const letters&) const { return false; }` | `!(letters{"abc"} == letters{"abc"})` | Pass |
+| `bool operator==(const letters&) const = delete;` | Original sorting and type-identity checks | Pass |
+
+For the absent-operator control, append this to the original source:
+
+```cpp
+template<class T> concept has_equality = requires(const T& x) { x == x; };
+static_assert(!has_equality<letters<4>>);
+```
+
+For the other variants, add exactly one operator declaration from the table
+inside `letters` and append its additional expression as a `static_assert`
+where applicable. These were scratch controls; the selected root spell remains
+unchanged, so its recorded source hash and earlier verification still apply.
+No O2 or cross-compiler verification is claimed for the equality variants.
+
+The explanation is **template-argument equivalence**, not ordinary equality.
+[C++23's rules](https://timsong-cpp.github.io/cppwp/n4950/temp.type#2) compare class
+subobjects and array elements recursively when determining specialization
+identity. This is not a call to a user-defined or defaulted `operator==`, nor
+is it a raw byte comparison. There is no implicit `operator==` in the original
+`letters` class; [defaulted-comparison rules](https://timsong-cpp.github.io/cppwp/n4950/class.compare.default#4)
+describe the separate situation where a defaulted spaceship operator causes an
+equality operator to be declared implicitly.
+
+The key sequence remains: a `word<"cab">` argument leads to a reconstructed
+`word<"abc">` parameter; the structural template arguments differ; the typed
+overload cannot accept the original argument. Changing ordinary equality does
+not alter that sequence. These controls clarify the matching mechanism without
+removing the changing-copy standard caveat below.
+
+## Follow-up: the compiler's “secret equality”
+
+Tor requested this separate future research direction:
+
+> I wonder whether there is anything else that is cursed related to this “secret equality operation” we can go in a different direction in the future.
+
+The question is whether template-argument equivalence itself can supply another
+small, surprising primitive, independently of the copy gate's normalization.
+Keep it as a future exploration, not a claimed discovery or a running task.
+
+Possible starting questions, not verified results from this session:
+
+- Where does template-argument equivalence distinguish or identify values
+  differently from ordinary equality? Candidates include references, union
+  active-member choices, floating-point signed zero, and classes whose equality
+  is absent or deliberately disagrees with their members.
+- Can specialization identity, overload matching, or the identity of a template
+  parameter object make one of those distinctions useful in a compact spell?
+- Can the experiment use value-preserving copies throughout, isolating this
+  language mechanism from the changing-copy initialization restriction?
+
+Start with the standard's equivalence categories, then run bounded compiler
+probes and check prior art. Preserve the distinction between semantic value
+equivalence, ordinary `==`, and object representation. This follow-up does not
+reopen the tabled zero-storage owning-vector investigation.
+
 ## Prior art and standard boundary
 
 The initial independent probes used an integer copy counter. A targeted search

@@ -337,6 +337,21 @@ the work happens while constructing template arguments and resolving the call.
 The last array element is treated as the string terminator and excluded from
 sorting. Embedded nulls before it participate normally.
 
+The equality involved is **template-argument equivalence**. For class values,
+the compiler recursively compares corresponding subobjects, including each
+array element, to determine whether two template arguments name the same
+specialization. This is a language rule, not a call to `operator==` and not a
+raw byte comparison. See [C++23's type-equivalence rules](https://timsong-cpp.github.io/cppwp/n4950/temp.type#2).
+
+`letters` has no equality operator in the original spell. Separate controls
+with `operator==` deleted, always true, and always false all retained the same
+sorting-gate results on GCC 13.3 at C++23 `-O0`. Even an operator claiming that
+`letters{"cab"} == letters{"abc"}` cannot make `word<"cab">` and `word<"abc">`
+the same type. Copying changes the candidate's template argument; the compiler's
+structural equivalence rule then determines that the parameter type no longer
+matches. The [working notes](working-notes/09-copy-gate.md#equality-controls)
+record the exact controls.
+
 The complete source passes local Ubuntu GCC 13.3.0 with C++23, `-Wall -Wextra
 -pedantic-errors`, and both `-O0` and `-O2`. It also passes with constexpr caching
 disabled, independently of the cache-storage spells. No Clang or newer-GCC

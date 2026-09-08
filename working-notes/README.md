@@ -10,6 +10,11 @@ viability into a test for normalization. It records the standalone sorting gate,
 copy-driven factorial deduction, compiler controls, prior art, and the relevant
 standard wording. The cache and pointer investigations were not resumed.
 
+The [equality controls](09-copy-gate.md#equality-controls) establish that this
+matching uses structural template-argument equivalence independently of
+`operator==`. Tor's requested [“secret equality” follow-up](09-copy-gate.md#follow-up-the-compilers-secret-equality)
+is recorded as a separate future research direction.
+
 [Sortable cache vector](08-sortable-cache-vector.md) preserves
 the small root spells and adds an advanced codec/iterator application, with
 locally verified mutable sorting. Routine work now goes directly to `main`, as
