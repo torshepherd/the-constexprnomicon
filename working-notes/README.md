@@ -10,7 +10,16 @@ iteration, memory, and selection/conditional logic. It also covers isolation,
 allowed operations, and the distinction between internal value extraction and
 observing the final result.
 
-**Latest work:** [Last rites](11-last-rites.md) uses temporary destruction as the
+**Latest spell:** [False idols](12-false-idols.md) makes constraint
+subsumption decide SAT even though every atomic constraint is literally true.
+The standalone example has no function bodies; a 389-case cross-check passes GCC
+and Clang. Tor accepted the finding; the source and reader-facing explanation are
+now in the root collection. It is not a roughly-Turing claim. The notes preserve
+Tor's broadened research targets verbatim, and the
+[research directions](13-research-directions.md) preserve the next experiments
+and boundaries for future sessions.
+
+[Last rites](11-last-rites.md) uses temporary destruction as the
 reverse traversal for automatic differentiation. It records the standalone
 spell, the full-expression boundary, GCC checks, and an unresolved Clang
 constant-evaluator disagreement. Tor explicitly requested a direction away
@@ -77,6 +86,11 @@ compiler-bug report, or scheduled recheck is pending in the background.
     setup worked; the recording could not be downloaded.
 11. [Last rites](11-last-rites.md): destruction schedules reverse-mode
     differentiation, with GCC evidence and the Clang lifetime control.
+12. [False idols](12-false-idols.md): all-true constraint subsumption as a SAT
+    oracle, the reduction, negative controls, and reproducible cross-checks.
+13. [Research directions](13-research-directions.md): proposed next experiments,
+    success criteria, isolation traps, and other mechanisms considered but not
+    tested during the False idols search.
 
 ## State at the original handoff
 
@@ -103,5 +117,5 @@ in the session; those scratch files are not committed here.
 
 The root sources and their assertions are the selected spells. Use the linked
 Godbolt examples for earlier editable sources, and the code and controls in the
-topical notes for the later pointer work. No new compiler runs were performed
-for this documentation pass.
+topical notes for the later pointer work. The original documentation pass did not
+perform new compiler runs; subsequent numbered notes record their own checks.
