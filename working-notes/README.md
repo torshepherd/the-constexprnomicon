@@ -4,7 +4,12 @@ This directory preserves the September 6–7, 2026 experiments between Tor Sheph
 and Codex. It is working material for future collaborators. The root
 [README](../README.md) and [NOTES](../NOTES.md) remain the reader-facing tour.
 
-**Latest follow-up:** [Typed cache values](07-typed-cache.md) tests a generic
+**Latest work:** [Sortable cache vector](08-sortable-cache-vector.md) preserves
+the small root spells and adds an advanced codec/iterator application, with
+locally verified mutable sorting. Routine work now goes directly to `main`, as
+requested by Tor and recorded in `AGENTS.md`.
+
+[Typed cache values](07-typed-cache.md) tests a generic
 byte encoding, an owning-string content encoding, and structured cache keys.
 The root dictionary/vector spells still use unsigned 64-bit values.
 
@@ -35,6 +40,8 @@ compiler-bug report, or scheduled recheck is pending in the background.
    64-bit values and a singleton vector, stale reads and writes, and verification.
 7. [Typed cache values](07-typed-cache.md): tested encodings beyond integers,
    owning strings, structured keys, and the boundary around arbitrary objects.
+8. [Sortable cache vector](08-sortable-cache-vector.md): local access identities,
+   deeper cache settings, codecs, proxy swaps, and compile-time sorting.
 
 ## State at the original handoff
 

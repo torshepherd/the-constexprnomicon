@@ -7,6 +7,10 @@ For session history and research handoff, start at
 successful and unsuccessful probes, compiler evidence, and shelved work.
 Keep research logs there; keep the root README for readers of the spells.
 
+- Commit and push completed work directly to `main`; do not open pull requests
+  for routine work in this repository. Tor explicitly prefers this workflow:
+  nobody depends on the repository, and it is a collaborative experiment.
+  Preserve remote history and incorporate concurrent changes without force-pushing.
 - Reduce each trick to its essence. Favor concise, deliberate expressions when
   they clarify the trick; complexity should come from the idea.
 - Keep each spell standalone. Put the code before its compile-time checks, and

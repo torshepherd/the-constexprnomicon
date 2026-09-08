@@ -27,6 +27,25 @@ C++23 with compiler extensions; none uses reflection. These are experiments in
 compiler behavior, with the relevant assumptions recorded in
 [the notes](NOTES.md).
 
+## Advanced applications
+
+[The sortable cache vector](advanced/cache-vector.cpp) keeps the small integer
+spells above intact and adds codecs, live proxies, and random-access iterators.
+It sorts integers, owning strings, and field-encoded records in compiler storage:
+
+```cpp
+static_assert([] {
+    auto v = numbers; // A local empty handle, not a copy of the elements.
+    std::ranges::sort(v);
+    return std::ranges::is_sorted(v);
+}());
+```
+
+Checked on GCC 13.3.0 at `-O0` and `-O2`, with C++23 and
+`-fconstexpr-cache-depth=64`. The local handle and deeper cache are essential to
+the tested algorithm behavior. Read the [advanced notes](NOTES.md#sortable-cache-vector)
+before trying it; this is not an ordinary runtime container.
+
 ## Read the spells
 
 The [notes](NOTES.md) explain the mechanisms, limitations, known related work,
