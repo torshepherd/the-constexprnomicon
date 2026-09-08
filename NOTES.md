@@ -352,6 +352,16 @@ structural equivalence rule then determines that the parameter type no longer
 matches. The [working notes](working-notes/09-copy-gate.md#equality-controls)
 record the exact controls.
 
+The associated [copy-driven factorial](working-notes/09-copy-gate.md#copy-driven-return-type-computation)
+is **roughly-Turing** in Tor's sense: it has recursion or iteration and memory.
+Return-type deduction drives recursive instantiation; the template argument's
+fields retain the computation's state; copying advances it. This characterizes
+the combined mechanism. A single overload decision tests a fixed point, while
+the sorting copy constructor supplies its own ordinary constexpr iteration.
+The [assessment](working-notes/09-copy-gate.md#roughly-turing-assessment)
+separates those ingredients from the future investigation of structural
+equivalence itself.
+
 The complete source passes local Ubuntu GCC 13.3.0 with C++23, `-Wall -Wextra
 -pedantic-errors`, and both `-O0` and `-O2`. It also passes with constexpr caching
 disabled, independently of the cache-storage spells. No Clang or newer-GCC

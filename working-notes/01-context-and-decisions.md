@@ -17,6 +17,31 @@ The request for further discoveries specifically targeted **C++23, without
 reflection**. The earlier compile-time `cat` uses C++26-era facilities and is
 recorded as a separate historical experiment, not advertised as a C++23 spell.
 
+## Terminology: roughly-Turing
+
+Tor's personal definition, supplied during the copy-gate follow-up:
+
+> has either recursion or iteration and memory
+
+Read this as **(recursion or iteration) + memory**. Use this definition when
+assessing whether a spell is roughly-Turing. It is a practical exploration
+criterion; do not silently replace it with a proof of formal Turing completeness
+or an additional requirement for unbounded storage. Memory can be state carried
+between successive instantiations; it need not be a mutable global object.
+
+Name the mechanism supplying each ingredient, including any use of constexpr
+evaluation, template instantiation, return-type deduction, or overload matching.
+The combined program satisfying the criterion does not establish that each of
+those mechanisms independently does so.
+
+Tor also reports earlier work establishing computational power in template
+argument deduction and exploring overload resolution, with a recursion obstacle
+in the latter. His correction was: “TAD is but OVL is not quite”. The earlier
+construction and exact restrictions have not been recovered in this session;
+preserve that distinction without claiming the obstacle has been diagnosed or
+solved. The [copy-gate assessment](09-copy-gate.md#roughly-turing-assessment)
+applies his definition to the experiments we actually have.
+
 ## How the session developed
 
 1. Tor asked for transcription of his

@@ -15,6 +15,12 @@ matching uses structural template-argument equivalence independently of
 `operator==`. Tor's requested [“secret equality” follow-up](09-copy-gate.md#follow-up-the-compilers-secret-equality)
 is recorded as a separate future research direction.
 
+Tor's definition of [roughly-Turing](01-context-and-decisions.md#terminology-roughly-turing)
+is “has either recursion or iteration and memory”. The
+[assessment](09-copy-gate.md#roughly-turing-assessment) explains why the
+copy-driven recursive computation meets it, and which ingredients come from
+instantiation, constexpr copying, and template argument state.
+
 [Sortable cache vector](08-sortable-cache-vector.md) preserves
 the small root spells and adds an advanced codec/iterator application, with
 locally verified mutable sorting. Routine work now goes directly to `main`, as
