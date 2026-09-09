@@ -58,6 +58,10 @@ same discovery. Keep credentials and other sensitive data out of the log.
   assume command output is complete JSON after truncation.
 - **Status:** Worked around. Full existing file contents can be much larger than
   the diff being published.
+- **Seance recurrence:** Combining several long working notes into one command
+  also truncated a read, obscuring part of the research-directions document.
+  Re-read the missing section with a bounded `sed` range. Large discovery output
+  is a problem even before publishing; keep subsequent reads focused.
 
 ## 2026-09-09 — Only an older GCC is installed locally
 
@@ -72,6 +76,10 @@ same discovery. Keep credentials and other sensitive data out of the log.
 - **Status:** Local Clang was not installed. Check availability once when entering
   a new environment; these are observations about this workspace, not a permanent
   limitation of Work or evidence that Clang rejects the spell.
+- **Seance recurrence:** The fresh workspace again had GCC 13.3 and no `clang++`.
+  A version check confirmed the missing executable. Remote GCC 16.2 and Clang
+  22.1.0 compiled and executed both new sources successfully; no local compiler
+  installation was needed.
 
 ## 2026-09-09 — Multiple old checkouts make session startup ambiguous
 
@@ -102,3 +110,53 @@ same discovery. Keep credentials and other sensitive data out of the log.
   from the smaller updates to existing documents.
 - **Status:** The incorrect patch was discarded; the corrected edits use the
   target files' current text.
+
+## 2026-09-09 — Assumed source directory interrupts startup inspection
+
+- **Context:** Seance research, reading the newly cloned repository.
+- **Symptom:** A batched `rg --files working-notes spells` failed because spells
+  live at the repository root; there is no `spells` directory. A dependent
+  `git log` after `&&` consequently did not run.
+- **Cost:** An extra bounded file read and later history check. This was an agent
+  assumption, not a repository problem.
+- **Workaround:** Use the root README's paths and inspect the known working-notes
+  directory. Keep independent inspection commands independent of a speculative
+  path succeeding.
+- **Status:** Resolved; no repository restructuring was needed.
+
+## 2026-09-09 — Broad tool discovery produces mostly irrelevant output
+
+- **Context:** Seance startup, looking for repository and context capabilities.
+- **Symptom:** Filtering tool metadata by generic words such as `file` and
+  `search` printed many unrelated capabilities. Later full remote execution
+  payloads similarly included build-environment metadata beyond the needed result.
+- **Cost:** Extra output to inspect before reaching the useful tool signatures
+  and compiler outcomes.
+- **Workaround:** Filter by exact capability names and keep full response objects
+  internally. Print build status, execution status, diagnostics, and stdout.
+- **Status:** Agent workflow improvement; no capability was missing or blocked.
+
+## 2026-09-09 — Web reader fails on a supplied GitHub source link
+
+- **Context:** Reading Tor's earlier CTAD example during the Seance search.
+- **Symptom:** The web reader returned `Internal Error` for the supplied GitHub
+  blob URL, while the Compiler Explorer API documentation opened successfully.
+- **Cost:** Needed a separate raw-source HTTP fetch; that fetch continued beyond
+  the initial shell wait and required retrieving the completed output.
+- **Workaround:** Fetch the same file from GitHub's raw-content URL. The complete
+  source was returned successfully.
+- **Status:** Resolved; not evidence that the source was inaccessible or missing.
+
+## 2026-09-09 — Temporary probe directory disappears across a pause
+
+- **Context:** Resuming Seance after the user's rate-limit continuation message.
+- **Symptom:** Writing an extracted documentation example to the earlier `/tmp`
+  probe directory failed with `FileNotFoundError`. The repository and its pending
+  source/documentation edits were still present, but that temporary directory was
+  gone. The cause of its removal was not established.
+- **Cost:** One failed verification command and recreating a probe directory.
+- **Workaround:** Put the reproducible final check in a fresh workspace scratch
+  directory. Earlier compiler outcomes were already recorded in working notes;
+  the source, controls, and handoff did not need reconstruction.
+- **Status:** Resolved. Never depend on temporary request/result files as the only
+  record of an expensive investigation.

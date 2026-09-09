@@ -37,10 +37,13 @@ that its underlying mechanism can express arbitrary programs.
 | [Last rites](last-rites.cpp) | Temporary destructors run backpropagation: the semicolon differentiates an expression. | GCC 13.3, GCC 16.2 |
 | [False idols](false-idols.cpp) | Overload ambiguity decides SAT, even though every atomic constraint is literally true. | GCC 13.3, GCC 16.2, Clang 22.1.0 |
 | [Chromatic aberration](chromatic-aberration.cpp) · [Explainer](chromatic-aberration.md) | Empty-base optimization runs greedy graph coloring; byte offsets are colors and `sizeof` counts them. | GCC 13.3, GCC 16.2, Clang 22.1.0 |
+| [Seance](seance.cpp) · [Explainer](seance.md) | A false concept leaves a runtime ghost; changing an uncalled helper's return type from `auto` to `int` silences it. | GCC 13.3, GCC 16.2, Clang 22.1.0 |
 
 Each file stands alone and carries its own `static_assert` checks. The spells use
 C++20 or C++23; none uses reflection. Compiler-specific assumptions and checked
 language versions are recorded in [the notes](NOTES.md).
+Seance also needs execution: its compile-time checks bring a runtime initializer
+into an executable whose `main` is empty.
 
 False idols contains no function bodies. Named concepts provide symbolic atoms,
 the compiler's constraint ordering answers the SAT question, and a final
@@ -109,6 +112,8 @@ g++-13 -std=c++23 -O2 -c copy-gate.cpp -o /tmp/copy-gate.o
 g++-16 -std=c++23 -O2 -c last-rites.cpp -o /tmp/last-rites.o
 g++-16 -std=c++20 -O2 -fsyntax-only false-idols.cpp
 g++-16 -std=c++20 -O2 -fsyntax-only chromatic-aberration.cpp
+g++-16 -std=c++20 -O2 seance.cpp -o /tmp/seance
+/tmp/seance
 ```
 
 Compiler executable names depend on your installation. The notes record each

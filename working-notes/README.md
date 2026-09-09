@@ -19,7 +19,18 @@ iteration, memory, and selection/conditional logic. It also covers isolation,
 allowed operations, and the distinction between internal value extraction and
 observing the final result.
 
-**Latest spell:** [Chromatic aberration](14-chromatic-aberration.md) makes object
+**Latest spell:** [Seance](15-seance.md) makes a false concept leave a runtime
+ghost. Auto return-type deduction instantiates an uncalled helper body, which
+odr-uses a printing global-variable specialization. The executable's `main` is
+empty. Explicit `int` return type or a failure before the helper removes the
+footprint. GCC and Clang checks include rejected overloads, duplicate queries,
+and helpers that would abort if actually called. The result relies on observed
+eager dynamic initialization; it is neither constexpr execution nor an ISO
+guarantee of startup output. The [reader explainer](../seance.md) builds it from
+an ordinary global initializer. Working notes retain the portability boundary,
+controls, provenance, and untested next threads.
+
+[Chromatic aberration](14-chromatic-aberration.md) makes object
 layout run greedy graph coloring. Shared empty edge markers forbid adjacent
 vertices from overlapping; offsets are colors and `sizeof` counts the colors
 used. GCC and Clang checks include a non-optimal ordering control. A separate
@@ -115,6 +126,9 @@ compiler-bug report, or scheduled recheck is pending in the background.
 14. [Chromatic aberration](14-chromatic-aberration.md): graph coloring through
     empty object layout, the ABI derivation, independent graph checks, a greedy
     non-optimality control, and a finite NAND/XOR interpretation.
+15. [Seance](15-seance.md): false concepts and rejected overloads leave runtime
+    initialization footprints through auto return-type deduction; exact controls
+    separate instantiation from execution and record the deferral boundary.
 
 ## State at the original handoff
 

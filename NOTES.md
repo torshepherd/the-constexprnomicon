@@ -556,6 +556,50 @@ The graph encoding and circuit interpretation were independently assembled in
 this project. Targeted searches found no exact prior construction; that is not
 a claim of historical priority for these uses of a documented layout algorithm.
 
+## Seance
+
+[Source](seance.cpp) · [Step-by-step explainer](seance.md) · [Controls and compiler evidence](working-notes/15-seance.md)
+
+A false concept can bring a printing global-variable specialization into a
+program with an empty `main`. Its unevaluated first requirement mentions an
+auto-returning template helper. Return-type deduction instantiates the helper's
+body, whose variable read odr-uses a global specialization with a runtime
+initializer. A later invalid nested-type requirement makes the concept false
+without undoing the earlier instantiation.
+
+The call expression is unevaluated, while the read in the separate instantiated
+function body is potentially evaluated. The body is never called; the variable's
+initializer prints when the executable runs. See
+[return-type deduction](https://eel.is/c++draft/dcl.spec.auto),
+[odr-use](https://eel.is/c++draft/basic.def.odr), and
+[lexical requirement checking](https://eel.is/c++draft/expr.prim.req.general).
+
+Replacing `auto` with explicit `int` removes the need to instantiate the helper
+body for this query and makes the executable silent. Moving the failing
+requirement before the helper also prevents the footprint for a fresh
+specialization. Repeated queries share one ghost rather than initializing again.
+
+The separate controls demonstrate the same footprint from a rejected constrained
+overload: an unevaluated call selects an undefined fallback, while the rejected
+candidate's constraint brings in a runtime initializer. They also cover `sizeof`,
+`decltype`, accepted requirements, ordinary false branches, discarded dependent
+`if constexpr` branches, direct unevaluated variable references, and function-local
+static variables. An `abort()` at the start of each auto helper confirms that
+its body is never called.
+
+The root prints exactly one `boo`; the controls check six unique initializations
+and their exact ID set. Both pass local GCC 13.3 at C++20 O0/O2 and remote x86-64
+GCC 16.2 and Clang 22.1.0 at C++20 O2, with `-Wall -Wextra -pedantic-errors`.
+These runs rely on the implementations' eager dynamic initialization.
+ISO C++ permits [deferring inline-variable initialization](https://eel.is/c++draft/basic.start.dynamic),
+so the startup output is not promised on every conforming implementation.
+The source needs no compiler builtin or intentional undefined behavior.
+
+This independently derived arrangement uses established instantiation and static
+registration ingredients. It is a standalone trick, not a roughly-Turing claim
+or a claim of historical priority. The footprint records which instrumented
+specializations were reached; it is not a complete chronological compiler trace.
+
 ## Related work and provenance
 
 The constructions were developed and tested during the conversation. A targeted
