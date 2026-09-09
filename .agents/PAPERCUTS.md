@@ -151,6 +151,11 @@ same discovery. Keep credentials and other sensitive data out of the log.
   filter again returned irrelevant tools. Narrow discovery to the exact GitHub
   capabilities once the checkout exists.
 
+- **Astral heap recurrence:** Startup again printed a broad tool inventory
+  before discovering that ordinary Git worked after sandbox escalation. A later
+  combined working-notes/web read exceeded the outer output budget. Re-read the
+  relevant notes in smaller ranges and kept subsequent compiler output bounded.
+
 ## 2026-09-09 — Web reader fails on a supplied GitHub source link
 
 - **Context:** Reading Tor's earlier CTAD example during the Seance search.
@@ -161,6 +166,85 @@ same discovery. Keep credentials and other sensitive data out of the log.
 - **Workaround:** Fetch the same file from GitHub's raw-content URL. The complete
   source was returned successfully.
 - **Status:** Resolved; not evidence that the source was inaccessible or missing.
+
+- **Astral heap recurrence:** The web reader returned `Internal Error` for two
+  GCC GitHub source views. The exact release sources had already downloaded
+  successfully from `raw.githubusercontent.com`; local bounded reads verified
+  the implementation and line numbers. No source-access blocker remained.
+
+## 2026-09-09 — Desktop sandbox blocks network cloning and WSL discovery
+
+- **Context:** Astral heap research started in a Windows ChatGPT project mirror
+  with only its instructions and read-only `sources/`, not a repository checkout.
+- **Symptom:** The sandboxed HTTPS clone failed to connect through the configured
+  loopback proxy. Windows command discovery found no C++ compiler. Sandboxed
+  `wsl --list --quiet` returned `Wsl/EnumerateDistros/Service/E_ACCESSDENIED`.
+- **Cost:** An extra clone attempt, compiler-location inspection, and WSL retry
+  before experiments could start.
+- **Workaround:** Approved escalated commands cloned the public repository into
+  a new child directory and identified Ubuntu with GCC 13.3 and Clang 18.1.
+  Compiler runs then used that distribution with explicit workspace paths.
+- **Status:** Resolved through the supported escalation path. There was no
+  automatic-review rejection and no edit to synced project source files.
+
+## 2026-09-09 — Nested Windows/WSL shell handling loses loop variables
+
+- **Context:** Running a small compiler/exponent matrix during Astral heap work.
+- **Symptom:** A Bash loop passed through PowerShell and `wsl ... bash -lc`
+  reached its Python child without the compiler-name argument or exponent value.
+  The child tried to execute `-std=c++23` and raised `FileNotFoundError` eight
+  times. The precise shell layer consuming the variables was not established.
+- **Cost:** One failed matrix invocation and replacing its orchestration.
+- **Workaround:** Put the loop and argument lists in a workspace Python file;
+  invoke it directly with `wsl --cd <workspace> -- python3 <file>`. No shell
+  variable interpolation is involved in compiler arguments.
+- **Status:** Resolved. Later compilation and expected-rejection results were
+  taken from the actual compiler return codes, not wrapper success alone.
+
+## 2026-09-09 — Equivalent-looking giant initializations take different paths
+
+- **Context:** Trying to zero-initialize a huge constexpr array after sparse,
+  uninitialized allocation had worked in GCC 13.3.
+- **Symptom:** `new unsigned char[1ull << 60]{}` exceeded the default constexpr
+  loop limit. Simply having few later reads/writes did not make this form cheap.
+- **Cost:** A failed bounded probe and investigation of aggregate initialization.
+- **Workaround:** A local aggregate-initialized built-in array worked; putting
+  the array in `struct realm` and allocating with `new realm{}` retained the
+  sparse representation. Source inspection confirmed indexed initializer entries
+  and implicit default values.
+- **Status:** Explained and preserved as a spell limitation, not a request to
+  raise limits or perform a huge runtime allocation.
+
+## 2026-09-09 — Windows and WSL Git disagree about checkout line endings
+
+- **Context:** A final Astral heap audit invoked Linux Git on the checkout
+  created by Windows Git, alongside compilation through WSL.
+- **Symptom:** Linux `git diff --check` treated existing CRLF files as changed
+  and reported trailing whitespace throughout the repository, producing a large
+  truncated output. The audit stopped before its dependent object-file check.
+  Windows Git showed only the intended edits and warned about normal LF-to-CRLF
+  checkout conversion for newly edited files.
+- **Cost:** One failed audit, an output flood, and a separate working-tree check.
+- **Workaround:** Keep Git inspection and publication in Windows Git, which
+  created this checkout; use WSL only for compiler and filesystem-based checks.
+  Remove the cross-environment Git command from the audit and rerun the remaining
+  object check. Do not normalize the whole repository to silence this mismatch.
+- **Status:** Resolved without changes to unrelated files or global Git settings.
+
+## 2026-09-09 — Fresh desktop checkout has no Git author identity
+
+- **Context:** Saving the verified Astral heap spell using the repository's
+  standing commit-to-main workflow.
+- **Symptom:** Windows Git staged and checked the intended files, then refused
+  `git commit` with `Author identity unknown` and an auto-detection failure.
+  No commit was created. The desktop has a credential helper but no configured
+  `user.name` or `user.email`.
+- **Cost:** A failed commit and inspection of the existing commit metadata.
+- **Workaround:** Use the connected GitHub app's tree/commit/ref tools, as in the
+  earlier publishing workaround, allowing the authenticated service to supply
+  commit identity. Do not invent an author email or alter global Git settings.
+- **Status:** Publication uses the connected app; local author configuration
+  remains unchanged. A final fetch and matching-tree check reconcile the checkout.
 
 ## 2026-09-09 — Temporary probe directory disappears across a pause
 

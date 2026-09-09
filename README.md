@@ -14,6 +14,7 @@ A grimoire of forbidden C++, conjured by human and machine.
 | [False idols](tricks/false-idols/) | Overload ambiguity decides SAT, though every atomic constraint is literally true. |
 | [Chromatic aberration](tricks/chromatic-aberration/) | Empty-base optimization colors a graph; byte offsets are colors. |
 | [Seance](tricks/seance/) | A false concept leaves a runtime ghost in a program with an empty `main`. |
+| [Astral heap](tricks/astral-heap/) | Eight-byte pointers address 32 exbibytes of live constexpr storage. |
 
 Each folder contains the source and a walkthrough, including compiler requirements
 and commands. Sources stand alone; most use `static_assert` checks, while Seance

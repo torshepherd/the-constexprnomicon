@@ -7,9 +7,13 @@ Read [AGENTS.md](../../AGENTS.md), [Pedantics](../../docs/Pedantics.md), and the
 
 ## Current state
 
-- Latest research: [Seance and the GCC cache crossover](15-seance.md). A failed
+- Previous research: [Seance and the GCC cache crossover](15-seance.md). A failed
   concept can trigger a dictionary write, but a direct nested requirement can
   trigger it too: an application of existing storage, not a new primitive.
+- New standalone result: [Astral heap](17-astral-heap.md). GCC represents eight
+  simultaneous four-EiB objects with eight-byte target pointers, beyond a flat
+  64-bit address space. Sparse aggregate initialization and symbolic allocation
+  identities supply the mechanism; disabling constexpr caching preserves it.
 - [Machine investigations](../../docs/MACHINES.md) track demonstrated ingredients
   separately from complete isolated machines. No complete isolated machine is
   currently demonstrated by the examples tracked there. Apply Tor's isolation rules.
@@ -58,6 +62,10 @@ Read [AGENTS.md](../../AGENTS.md), [Pedantics](../../docs/Pedantics.md), and the
 15. [Seance](15-seance.md): false concepts and rejected overloads leave runtime
     initialization footprints through auto return-type deduction; exact controls
     separate instantiation from execution and record the deferral boundary.
+16. [Repository cleanup](16-repository-cleanup.md): mechanism-based folders,
+    reader-facing explainers, and updated reproduction commands.
+17. [Astral heap](17-astral-heap.md): a 32-EiB logical heap with eight-byte pointers,
+    sparse aggregate initialization, the 32-bit counterpart, and rejection controls.
 
 ## State at the original handoff
 
