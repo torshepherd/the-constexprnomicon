@@ -1,6 +1,6 @@
 # Session handoff — start here
 
-This directory preserves the September 6–8, 2026 experiments between Tor Shepherd
+This directory preserves the September 6–9, 2026 experiments between Tor Shepherd
 and Codex. It is working material for future collaborators. The root
 [README](../README.md) and [NOTES](../NOTES.md) remain the reader-facing tour.
 The README separates standalone tricks from
@@ -13,7 +13,15 @@ iteration, memory, and selection/conditional logic. It also covers isolation,
 allowed operations, and the distinction between internal value extraction and
 observing the final result.
 
-**Latest spell:** [False idols](12-false-idols.md) makes constraint
+**Latest spell:** [Chromatic aberration](14-chromatic-aberration.md) makes object
+layout run greedy graph coloring. Shared empty edge markers forbid adjacent
+vertices from overlapping; offsets are colors and `sizeof` counts the colors
+used. GCC and Clang checks include a non-optimal ordering control. A separate
+four-gate XOR probe demonstrates that the same layout rule composes NAND gates.
+This is a new standalone layout trick, not a continuation of lifetime storage,
+cache state, or the subsumption solver, and not a roughly-Turing claim.
+
+[False idols](12-false-idols.md) makes constraint
 subsumption decide SAT even though every atomic constraint is literally true.
 The standalone example has no function bodies; a 389-case cross-check passes GCC
 and Clang. Tor accepted the finding; the source and reader-facing explanation are
@@ -94,6 +102,9 @@ compiler-bug report, or scheduled recheck is pending in the background.
 13. [Research directions](13-research-directions.md): proposed next experiments,
     success criteria, isolation traps, and other mechanisms considered but not
     tested during the False idols search.
+14. [Chromatic aberration](14-chromatic-aberration.md): graph coloring through
+    empty object layout, the ABI derivation, independent graph checks, a greedy
+    non-optimality control, and a finite NAND/XOR interpretation.
 
 ## State at the original handoff
 

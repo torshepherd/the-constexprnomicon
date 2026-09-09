@@ -36,6 +36,7 @@ that its underlying mechanism can express arbitrary programs.
 | [Copy gate](copy-gate.cpp) | A copy constructor sorts a template argument; an unconstrained overload accepts only already-sorted words. | GCC 13.3 |
 | [Last rites](last-rites.cpp) | Temporary destructors run backpropagation: the semicolon differentiates an expression. | GCC 13.3, GCC 16.2 |
 | [False idols](false-idols.cpp) | Overload ambiguity decides SAT, even though every atomic constraint is literally true. | GCC 13.3, GCC 16.2, Clang 22.1.0 |
+| [Chromatic aberration](chromatic-aberration.cpp) | Empty-base optimization runs greedy graph coloring; byte offsets are colors and `sizeof` counts them. | GCC 13.3, GCC 16.2, Clang 22.1.0 |
 
 Each file stands alone and carries its own `static_assert` checks. The spells use
 C++20 or C++23; none uses reflection. Compiler-specific assumptions and checked
@@ -99,6 +100,7 @@ g++-16 -std=c++23 -O2 -c cache-vector.cpp -o /tmp/cache-vector.o
 g++-13 -std=c++23 -O2 -c copy-gate.cpp -o /tmp/copy-gate.o
 g++-16 -std=c++23 -O2 -c last-rites.cpp -o /tmp/last-rites.o
 g++-16 -std=c++20 -O2 -fsyntax-only false-idols.cpp
+g++-16 -std=c++20 -O2 -fsyntax-only chromatic-aberration.cpp
 ```
 
 Compiler executable names depend on your installation. The notes record each

@@ -5,11 +5,11 @@ This page explains the [standalone tricks](README.md#standalone-tricks).
 restricted mechanism supplies selection, memory, and recurrence. A working trick
 is not automatically a demonstrated machine.
 
-Developed in a conversation between Tor Shepherd and Codex on 2026-09-07.
-Compiler Explorer targets: x86-64 GCC 16.2 (`g162`) and Clang 22.1.0
-(`clang2210`). The assertions in the root spell sources pass at
-`-std=c++23 -O0` and `-std=c++23 -O2` on the compilers listed in the README.
-Cache memory and cache vector were also checked locally with Ubuntu GCC 13.3.0.
+Developed in conversations between Tor Shepherd and Codex. Compiler Explorer
+targets include x86-64 GCC 16.2 (`g162`) and Clang 22.1.0 (`clang2210`);
+local checks use Ubuntu GCC 13.3.0. Language modes, optimization levels, and
+compiler-specific results are recorded for each spell below and in its working
+notes.
 
 ## One-pointer vector
 
@@ -492,6 +492,69 @@ solver or a performance claim. Corentin Jabot discusses that existing cost in
 [his Clang implementation account](https://cor3ntin.github.io/posts/clang21/#faster-subsumption).
 The all-true encoding and ambiguity oracle were independently assembled in this
 project; the targeted prior-art search does not establish historical priority.
+
+## Chromatic aberration
+
+[Source](chromatic-aberration.cpp) · [Proof, controls, and circuit probe](working-notes/14-chromatic-aberration.md)
+
+An empty class can make the compiler run a greedy graph-coloring algorithm
+just to determine its size. There are no function definitions, constexpr
+algorithms, or solving templates in the construction.
+
+Give each edge its own empty type. Each vertex inherits the types of its incident
+edges. Then inherit all the vertex types, in the order to be colored:
+
+```cpp
+struct ab {}; struct bc {}; struct cd {}; struct de {}; struct ea {};
+struct A : ab, ea {};
+struct B : ab, bc {};
+struct C : bc, cd {};
+struct D : cd, de {};
+struct E : de, ea {};
+struct pentagon : A, B, C, D, E {};
+
+static_assert(sizeof(pentagon) == 3);
+```
+
+All markers within a vertex share its address. Adjacent vertices contain distinct
+subobjects of the same marker type, so they cannot share an address with each
+other. Unconnected vertices have no shared marker to prevent overlap.
+
+The [Itanium ABI's empty-component allocation rule](https://itanium-cxx-abi.github.io/cxx-abi/abi.html#non-pod)
+tries zero, then successive aligned offsets until no type conflict remains.
+With only these empty components, data size stays zero and alignment stays one.
+It therefore picks the smallest offset unused by an earlier neighbor: precisely
+first-fit coloring. The five vertices receive offsets `0, 1, 0, 1, 2`, giving a
+three-byte class that still satisfies `std::is_empty_v<pentagon>`.
+
+The source also uses the same vertex types as `[[no_unique_address]]` members of
+a standard-layout class. `offsetof` then reads every color as an integer constant
+expression, without constructing an object.
+
+This is **greedy coloring in declaration order, not minimum coloring**. A
+four-vertex path can occupy two or three bytes depending on base order. These
+exact offsets depend on the target ABI; ISO C++ alone does not require this
+packing algorithm. Edge markers must be unique per edge and vertices distinct,
+empty, and aligned to one, with nonvirtual inheritance. The color-count formula
+assumes at least one vertex.
+
+The standalone spell and order/overlap controls pass C++20 on local GCC 13.3
+at `-O0` and `-O2`, and on x86-64 GCC 16.2 and Clang 22.1.0 at `-O2`.
+An independent cross-check covers all 1,099 labeled graphs on one through five
+vertices and 60 larger seeded graphs locally; a 135-graph subset passes both
+remote compilers. It checks individual member offsets and both class sizes.
+
+There is also a finite circuit interpretation: zero means false and any nonzero
+offset means true. A vertex receives a nonzero offset exactly when at least one
+earlier neighbor is at zero. Each vertex is consequently a NAND gate whose inputs
+are those neighbors. All four rows of a four-gate XOR circuit pass on all three
+compilers. This supplies composable finite logic, without demonstrating the
+recurrence required for a roughly-Turing machine. The working notes keep that
+probe separate from the small root spell.
+
+The graph encoding and circuit interpretation were independently assembled in
+this project. Targeted searches found no exact prior construction; that is not
+a claim of historical priority for these uses of a documented layout algorithm.
 
 ## Related work and provenance
 
