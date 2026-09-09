@@ -160,3 +160,20 @@ same discovery. Keep credentials and other sensitive data out of the log.
   the source, controls, and handoff did not need reconstruction.
 - **Status:** Resolved. Never depend on temporary request/result files as the only
   record of an expensive investigation.
+
+## 2026-09-09 — Optional constant folding changes a cache control's expectation
+
+- **Context:** Seance/cache crossover research; checking an uncalled auto-return
+  helper containing an ordinary constexpr function call.
+- **Symptom:** An initially expected cold-cache assertion passed on GCC 13.3 O0
+  but failed on GCC 13.3 O2: return-expression folding had warmed the cache.
+  Reusing the O0 expectation on GCC 16.2 also failed, because that version warmed
+  the key even at O0.
+- **Cost:** Needed to separate required constant evaluation from optional folding
+  and rerun the bounded control with the observed per-compiler expectation.
+- **Workaround:** Use an explicit constexpr initializer or a nested requirement
+  for the principal construction. Preserve the optional-folding probe with a
+  separate expectation parameter and exact compiler/optimization evidence.
+- **Status:** Explained and recorded in working-notes/15-seance.md. This was a
+  research assumption corrected by the controls, not a failed cache write or
+  evidence that the unevaluated call was executed.

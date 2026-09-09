@@ -150,3 +150,123 @@ The discovery search also considered exception-specification inference, special-
 member generation, pointer qualification composition, and lookup-based graph
 queries, but did not compile constructions for those routes. They are ideas,
 not tested failures or additional discoveries.
+
+## Follow-up: can the ghost write into GCC's constexpr cache?
+
+Tor asked whether concept-driven materialization could trigger the earlier
+memoization trick, and whether that combination adds any new magic. **It works;
+the classification is an application of existing storage, not another primitive.**
+
+[seance-cache.cpp](seance-cache.cpp) provides bounded controls. Change the ghost
+from a printing runtime initializer to a required constant initializer:
+
+```cpp
+template<int Key>
+inline constexpr int ghost = slow(Key, 500);
+
+template<int Key>
+auto summon() { return ghost<Key>; }
+```
+
+The false concept still triggers helper-body instantiation. That now requires a
+constexpr variable's definition and its constant initialization. Unlike the
+non-constant original ghost, reading this constexpr integer need not odr-use it;
+the relevant bridge is its required constant evaluation. `slow(Key, 500)` warms
+the old compiler cache. A later `__builtin_constant_p(slow(Key, 520))` detects it.
+There is no runtime initializer or eager-startup dependency in this variation.
+
+The source checks a cold key, checks a false concept, then successfully observes
+the warmed key. Putting the failed type requirement first or giving the helper
+an explicit return type leaves other keys cold on the tested configurations.
+
+### The more revealing reduction
+
+A nested requirement can perform the same constant evaluation directly:
+
+```cpp
+template<class T, int Key>
+concept direct = requires {
+    requires (slow(Key, 500) == Key);
+    typename T::missing;
+};
+```
+
+For `int`, the first requirement warms the cache, the second fails, and the
+concept is false. Seance's variable and auto-return helper are unnecessary here.
+[Nested requirements](https://eel.is/c++draft/expr.prim.req.nested) require a
+satisfied constraint expression; a
+[simple requirement](https://eel.is/c++draft/expr.prim.req.simple) such as
+`slow(Key, 500);` merely checks an unevaluated expression. Even naming a consteval
+function in that simple requirement does not itself require executing its body.
+Those two simple-requirement controls leave their keys cold.
+
+[seance-cache-memory.cpp](seance-cache-memory.cpp) copies the three existing
+dictionary primitives unchanged and demonstrates complete writes:
+
+1. Key 77 initially reads zero.
+2. A false concept's materialized constexpr ghost writes 42.
+3. Another false concept's direct nested requirement overwrites it with 99.
+4. Repeating the first query leaves 99 in place.
+5. A fresh query type with the old write identity also leaves 99 in place:
+   the identical `remember(77, 42, 1000)` tuple can replay its cached result.
+6. A fresh query and fresh write identity write 42 again.
+
+The constexpr ghost's ordinary value is not the dictionary. Later reads recover
+the payload from cached recursion facts, exactly as in the original memory spell.
+Only the place initiating the write has changed. This could supply a compile-time
+log of reached, instrumented checks, including failed ones. It supplies neither
+new storage, automatic recurrence, rollback, nor an isolated concepts machine.
+
+Keep the distinction between the query result and its footprint: all negative
+test concepts remain false. Do not turn changing compiler memory into a promise
+that one concept specialization can alternate between true and false. The
+[atomic-constraint rules](https://eel.is/c++draft/temp.constr.atomic) require
+consistent satisfaction for identical atomic constraints and template arguments.
+Repeated queries also need not revisit an existing template definition; fresh
+template identity alone does not defeat the constexpr function's separate cache.
+
+### An optimization-dependent wrinkle
+
+The control `auto body_only() { return slow(Key, 500); }` has no constexpr local
+or other required constant-expression context. Its body is instantiated for type
+deduction. Nevertheless, GCC sometimes folds that ordinary return expression
+and leaves cache state. GCC 13.3 leaves its key cold at O0 and warm at O2; GCC
+16.2 warms it at both O0 and O2. This was discovered by a failed cold-key
+assertion, then isolated with explicit expectations. Do not equate "not required
+to constant-evaluate" with "cannot be constant-evaluated by the implementation."
+The forced-constexpr and direct nested-requirement constructions do not need
+this optional folding behavior.
+
+### Follow-up compiler evidence
+
+All checks use `-std=c++23 -Wall -Wextra -pedantic-errors`; local runs also use
+`-fsyntax-only`. The bounded source defaults to cold=0, warmed=1, folded=1.
+
+| Source/configuration | Result |
+| --- | --- |
+| Bounded controls, GCC 13.3 O0, `-DEXPECT_FOLDED=0` | Pass; optional return-expression folding leaves key cold |
+| Bounded controls, GCC 13.3 O2 | Pass |
+| Bounded controls, GCC 16.2 O0 and O2 | Pass with default expectations |
+| Bounded controls, GCC 13.3 O2, `-fconstexpr-cache-depth=0 -DEXPECT_WARM=0 -DEXPECT_FOLDED=0` | Pass; warmed keys are no longer observable |
+| Bounded controls, GCC 13.3 O2, `-fconstexpr-depth=1024 -DEXPECT_COLD=1` | Pass; cold keys become observable too |
+| Bounded controls, Clang 22.1.0 O2, `-DEXPECT_WARM=0 -DEXPECT_FOLDED=0` | Pass; no GCC-style persistent warm-key effect |
+| Full dictionary crossover, GCC 13.3 O0/O2 and GCC 16.2 O2 | Pass; reads 0, 42, 99, 99, 99, 42 |
+
+The first GCC 16.2 O0 run incorrectly expected the GCC 13.3 O0 folding result;
+only its folded-key assertion failed. The corrected expectation passes. This
+compiler difference does not affect the two required-evaluation constructions.
+All successful checks above have no diagnostics. Remote compiler IDs were
+rediscovered as `g162` and `clang2210`; compiler response codes were checked.
+
+The [documented GCC cache and depth options](https://gcc.gnu.org/onlinedocs/gcc/C_002b_002b-Dialect-Options.html)
+describe implementation controls, not a supported stateful-storage facility.
+The hybrid inherits the original nonportable cache behavior and wrapper-identity
+traps. Run raised-depth experiments only on the bounded controls, not the
+dictionary's unbounded revision scan.
+
+Reproduce the default GCC O2 checks from the repository root:
+
+```sh
+g++ -std=c++23 -O2 -Wall -Wextra -pedantic-errors -fsyntax-only working-notes/seance-cache.cpp
+g++ -std=c++23 -O2 -Wall -Wextra -pedantic-errors -fsyntax-only working-notes/seance-cache-memory.cpp
+```

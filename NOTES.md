@@ -600,6 +600,15 @@ registration ingredients. It is a standalone trick, not a roughly-Turing claim
 or a claim of historical priority. The footprint records which instrumented
 specializations were reached; it is not a complete chronological compiler trace.
 
+The [GCC cache crossover](working-notes/15-seance.md#follow-up-can-the-ghost-write-into-gccs-constexpr-cache)
+changes the ghost to a required constexpr initializer, so a false concept writes
+compiler-resident memory that later constant evaluations can read. The same
+write also works directly in a nested requirement, without the Seance helper.
+This is an application of existing cache storage; it inherits the depth, cache,
+and repeated-call identity limitations. Separate controls record an additional
+GCC version/optimization difference in optional folding of an ordinary return
+expression. The root Seance and cache spells remain unchanged.
+
 ## Related work and provenance
 
 The constructions were developed and tested during the conversation. A targeted

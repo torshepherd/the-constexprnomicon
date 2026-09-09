@@ -74,6 +74,11 @@ Checked on GCC 13.3.0 at `-O0` and `-O2`, with C++23 and
 the tested algorithm behavior. Read the [advanced notes](NOTES.md#sortable-cache-vector)
 before trying it; this is not an ordinary runtime container.
 
+[Seance with GCC cache memory](seance.md#crossing-over-with-gcc-cache-memory)
+lets a failed concept leave a compile-time dictionary write. A nested requirement
+can trigger the same write directly, so this is an application of existing
+storage rather than another independent primitive.
+
 ## Roughly-Turing-complete features
 
 Can a language feature become a programming language of its own? Our criterion

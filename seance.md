@@ -165,3 +165,17 @@ tested behavior and the language's portability boundary separate.
 The ingredients are established language mechanisms. Their arrangement here was
 independently derived by Tor Shepherd and Codex; historical priority is not
 claimed. This is a standalone instantiation trick, with no roughly-Turing claim.
+
+## Crossing over with GCC cache memory
+
+The ghost can instead have a constexpr initializer that calls the earlier cache
+spell's `remember` function. A failed concept then leaves a **compile-time**
+memory write, readable by a later `static_assert`. This combination passes the
+GCC checks in the [follow-up investigation](working-notes/15-seance.md#follow-up-can-the-ghost-write-into-gccs-constexpr-cache).
+
+There is an even smaller route: a nested requirement such as
+`requires (remember(key, value, event) == value);` directly forces the write,
+before a later requirement makes the concept false. It needs neither the ghost
+variable nor auto return-type deduction. This is a useful application of the
+existing cache storage, rather than a new independent spell. Repeated queries
+and repeated writer identities can replay old results instead of writing again.

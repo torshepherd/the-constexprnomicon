@@ -29,6 +29,11 @@ eager dynamic initialization; it is neither constexpr execution nor an ISO
 guarantee of startup output. The [reader explainer](../seance.md) builds it from
 an ordinary global initializer. Working notes retain the portability boundary,
 controls, provenance, and untested next threads.
+The [cache crossover follow-up](15-seance.md#follow-up-can-the-ghost-write-into-gccs-constexpr-cache)
+now verifies failed concepts writing the GCC constexpr dictionary. A direct
+nested requirement does the same job without Seance's helper: application, not
+new primitive. It also records repeated-write identity traps and an optional
+constant-folding difference between GCC versions and optimization levels.
 
 [Chromatic aberration](14-chromatic-aberration.md) makes object
 layout run greedy graph coloring. Shared empty edge markers forbid adjacent
