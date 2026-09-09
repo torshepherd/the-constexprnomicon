@@ -1,46 +1,58 @@
 # Working in the Constexprnomicon
 
-This is a collection of small, artistic compile-time C++ experiments.
+A collection of small, artistic C++ experiments, often at compile time.
 
-For session history and research handoff, start at
-[working-notes/README.md](working-notes/README.md). It links the decisions,
-successful and unsuccessful probes, compiler evidence, and shelved work.
-Keep research logs there; keep the root README for readers of the spells.
-Read [PAPERCUTS.md](PAPERCUTS.md) for known workflow friction and workarounds.
+## Start here
 
-Read [working-notes/Pedantics.md](working-notes/Pedantics.md) before assessing a
-technique's computational power. It preserves Tor's verbatim instructions on
-roughly-Turing, isolation, allowed operations, and intermediate versus final
-value extraction.
+- [Research handoff](.agents/notes/README.md): decisions, compiler evidence,
+  unsuccessful probes, shelved work, and next directions. Read the relevant
+  topical notes before continuing an investigation.
+- [Pedantics](docs/Pedantics.md): Tor's verbatim rules for computational-power
+  claims. Read before assessing isolation or roughly-Turing completeness.
+- [Papercuts](.agents/PAPERCUTS.md): known workflow friction and workarounds.
 
-- Commit and push completed work directly to `main`; do not open pull requests
-  for routine work in this repository. Tor explicitly prefers this workflow:
-  nobody depends on the repository, and it is a collaborative experiment.
-  Preserve remote history and incorporate concurrent changes without force-pushing.
-- Reduce each trick to its essence. Favor concise, deliberate expressions when
-  they clarify the trick; complexity should come from the idea.
-- Keep each spell standalone. Put the code before its compile-time checks.
-  Add an approachable Markdown explainer beside the source, with the same stem:
-  `spell.cpp` and `spell.md`. Build the explanation from first principles, with
-  small code steps and diagrams or tables where useful; do not assume a math/CS
-  course background. Link the pair from the README. Use this convention for new
-  spells and add missing explainers when revisiting existing ones. NOTES.md keeps
-  the technical overview, limitations, and provenance; working-notes keeps the
-  research history and detailed compiler evidence.
-- Write down and commit every observed papercut in PAPERCUTS.md, including small
-  inconveniences that burn cycles: refusals or approval surprises, commands that
-  fail, missing tools, confusing behavior, retries, and workarounds. Do not limit
-  the log to major or unresolved blockers. Record the context, attempted action,
-  actual symptom or stated rejection reason, extra work caused, workaround, and
-  current status. Update existing entries when they recur or are resolved, and
-  commit the log alongside the session's work.
-- Preserve the playful style. Avoid turning sketches into a generic library or
-  adding infrastructure without a concrete need.
-- Keep meaningful static_assert checks for the claimed behavior. Verify changed
-  spells on the named compiler and record the version, flags, and outcome.
-- Treat compiler acceptance as evidence of observed behavior, not proof of ISO
-  portability. Document the assumptions a reader needs to reproduce the spell.
-- Credit related work and the human/AI collaboration. Distinguish independent
-  derivation from a verified claim of historical novelty.
-- This repository has its own history. Reference sorcery-cpp as the pre-AI
-  original; do not import or rewrite that repository's history.
+## Repository layout
+
+- `README.md` is the short reader-facing catalog; link to each trick's folder.
+- `tricks/<name>/<name>.cpp` is the small standalone spell, with code before its
+  meaningful `static_assert` checks. `tricks/<name>/README.md` explains it from
+  first principles, with compiler versions, flags, limits, and provenance.
+- Keep larger applications in named subdirectories of the parent trick, with
+  their own source and README. Keep controls and exploratory code in that
+  trick's `experiments/`, linked and explained by its README or research notes.
+- Group a shared mechanism before adding catalog entries: GCC cache storage
+  lives under `tricks/gcc-memoization/`, with counter, memory, vector, sortable
+  vector, and cache crossover experiments together. Its family README links
+  each construction. Keep the root introduction to the one-line tagline.
+- `docs/` holds material shared across tricks: machine investigations,
+  Pedantics, and common provenance. Keep standalone tricks and isolated-machine
+  claims distinct; update the machine page when evidence actually changes.
+- `.agents/notes/` holds research history and handoffs. Preserve user quotations
+  verbatim. Keep its README a navigation aid; put session detail in topical notes.
+- `.agents/` is this repository's convention for supporting agent material.
+  Root `AGENTS.md` remains the discoverable instruction entry point. These notes
+  are not skills or automatically loaded configuration.
+
+## Working rules
+
+- Commit and push completed work directly to `main`; do not open routine PRs.
+  Tor explicitly prefers this workflow because nobody depends on the repository.
+  Incorporate concurrent changes and preserve remote history; never force-push.
+- Reduce each trick to its essence. Preserve the playful style and favor concise,
+  deliberate expressions. Keep every spell standalone; avoid generic-library
+  machinery or infrastructure without a concrete need.
+- Build explainers in small code steps; do not assume a math/CS course background.
+  Keep the mechanism, caveats, and reproduction instructions together. Maintain
+  links and commands when moving files; commands should run from the repo root.
+- Verify changed spells on their named compiler and record version, flags, and
+  outcome. Compiler acceptance is evidence, not proof of ISO portability.
+  For pure moves, verify source identity and relocated includes/commands.
+- Write down and commit **every observed papercut**, including minor friction
+  and successful workarounds: refusals or approval surprises, failed commands,
+  missing tools, confusing behavior, retries, and extra steps. Record context,
+  attempted action, symptom or stated rejection reason, extra work, workaround,
+  and status in `.agents/PAPERCUTS.md`. Update recurring entries; include the log
+  in the session's commit. Do not include credentials.
+- Credit related work and the human/AI collaboration. Independent derivation
+  does not establish historical novelty. This repo has its own history:
+  reference sorcery-cpp as the pre-AI original; do not import or rewrite its history.
