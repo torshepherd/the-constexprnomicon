@@ -495,7 +495,7 @@ project; the targeted prior-art search does not establish historical priority.
 
 ## Chromatic aberration
 
-[Source](chromatic-aberration.cpp) · [Proof, controls, and circuit probe](working-notes/14-chromatic-aberration.md)
+[Source](chromatic-aberration.cpp) · [Step-by-step explainer](chromatic-aberration.md) · [Proof, controls, and circuit probe](working-notes/14-chromatic-aberration.md)
 
 An empty class can make the compiler run a greedy graph-coloring algorithm
 just to determine its size. There are no function definitions, constexpr

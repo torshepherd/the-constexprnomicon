@@ -11,6 +11,8 @@ markers. Laying out the vertices as empty bases or `[[no_unique_address]]`
 members computes first-fit graph coloring in declaration order.
 
 The [root spell](../chromatic-aberration.cpp) demonstrates a five-cycle.
+The [reader walkthrough](../chromatic-aberration.md) builds the coloring example
+from dots, lines, and empty-object addresses without assuming graph theory.
 [Layout controls](layout-controls.cpp) check order dependence and the effect of
 ordinary members. [The graph checker](layout-check.py) compares against a
 separate implementation. [The XOR probe](layout-xor.cpp) preserves the finite
@@ -184,6 +186,8 @@ Remote compilation succeeded, but automatic approval review rejected creation
 of a permanent public Godbolt share link as a separate publication action.
 No share link is supplied. The checked source and reproduction commands are
 preserved in the repository.
+The [papercut log](../PAPERCUTS.md) records this refusal, the Git authentication
+workaround, and other workflow friction from the session.
 
 ## Portability, provenance, and next boundaries
 
@@ -215,3 +219,33 @@ Useful future boundaries, not unfinished promises:
 - Keep the small coloring spell intact. A general graph/circuit library, larger
   generated applications, and an optimization claim are not needed to establish
   this result or requested as the next task.
+
+## Documentation follow-up
+
+Tor confirmed that the explanation connecting dot colors to empty-object
+addresses made the example clear, then requested its preservation and a
+repository-wide papercut log. His instructions, verbatim:
+
+> Ohhhh ok I get it.
+>
+> Can you add this write up to the repo somewhere (maybe each spell should have a markdown explainer next to source?) and then also jot down everything else you need to in the readme, working notes, etc?
+>
+> While you’re at it please create a PAPERCUTS.md file and update AGENTS.md to specify that agents should write down and commit any and all small little things that are cumbersome, cause them to burn cycles, etc. Like for instance refusals of things which should be obviously ok, or things that don’t work leading to needing workarounds
+
+The walkthrough is now [chromatic-aberration.md](../chromatic-aberration.md),
+beside the source. It preserves the explanation's progression, code fragments,
+five-dot diagram, coloring table, and byte-placement table, with a document
+introduction and links to the deeper notes. The NAND/XOR investigation remains
+here and in its separate probe, so the introductory explanation stays focused.
+
+AGENTS.md now establishes same-stem source/explainer pairs for new and revisited
+spells. Older technical material remains in NOTES.md until a spell is revisited;
+this update does not claim that every older spell already has a walkthrough.
+The README and handoff links lead to the new explainer and PAPERCUTS.md.
+
+PAPERCUTS.md records observed friction, including automatic approval refusals,
+missing Git push credentials, truncated command output, unavailable local Clang,
+stale checkout discovery, and a failed documentation patch. Recording small
+issues and successful workarounds is a standing requirement, not just a log of
+major blockers. This follow-up changes documentation only; prior compiler
+results remain the evidence for the unchanged sources.

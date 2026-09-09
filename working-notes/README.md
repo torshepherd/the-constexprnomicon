@@ -7,6 +7,12 @@ The README separates standalone tricks from
 [roughly-Turing machine investigations](../MACHINES.md). That page tracks allowed
 mechanisms, demonstrated ingredients, and open completeness claims.
 
+Approachable walkthroughs now live beside their sources as `spell.md`, starting
+with [Chromatic aberration](../chromatic-aberration.md). Keep technical overviews
+in NOTES.md and the investigation history here. Read and update
+[PAPERCUTS.md](../PAPERCUTS.md) for all workflow friction, including minor issues
+and successful workarounds; AGENTS.md requires committing those observations.
+
 **Read [Pedantics.md](Pedantics.md) before assessing computational power.** It
 preserves Tor's instructions verbatim: roughly-Turing requires recursion or
 iteration, memory, and selection/conditional logic. It also covers isolation,
@@ -18,6 +24,10 @@ layout run greedy graph coloring. Shared empty edge markers forbid adjacent
 vertices from overlapping; offsets are colors and `sizeof` counts the colors
 used. GCC and Clang checks include a non-optimal ordering control. A separate
 four-gate XOR probe demonstrates that the same layout rule composes NAND gates.
+Tor confirmed that the [dots-to-addresses walkthrough](../chromatic-aberration.md)
+made the example clear and asked to preserve it alongside the source. His
+documentation and papercut instructions are recorded in
+[the session follow-up](14-chromatic-aberration.md#documentation-follow-up).
 This is a new standalone layout trick, not a continuation of lifetime storage,
 cache state, or the subsumption solver, and not a roughly-Turing claim.
 

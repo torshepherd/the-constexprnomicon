@@ -36,7 +36,7 @@ that its underlying mechanism can express arbitrary programs.
 | [Copy gate](copy-gate.cpp) | A copy constructor sorts a template argument; an unconstrained overload accepts only already-sorted words. | GCC 13.3 |
 | [Last rites](last-rites.cpp) | Temporary destructors run backpropagation: the semicolon differentiates an expression. | GCC 13.3, GCC 16.2 |
 | [False idols](false-idols.cpp) | Overload ambiguity decides SAT, even though every atomic constraint is literally true. | GCC 13.3, GCC 16.2, Clang 22.1.0 |
-| [Chromatic aberration](chromatic-aberration.cpp) | Empty-base optimization runs greedy graph coloring; byte offsets are colors and `sizeof` counts them. | GCC 13.3, GCC 16.2, Clang 22.1.0 |
+| [Chromatic aberration](chromatic-aberration.cpp) · [Explainer](chromatic-aberration.md) | Empty-base optimization runs greedy graph coloring; byte offsets are colors and `sizeof` counts them. | GCC 13.3, GCC 16.2, Clang 22.1.0 |
 
 Each file stands alone and carries its own `static_assert` checks. The spells use
 C++20 or C++23; none uses reflection. Compiler-specific assumptions and checked
@@ -79,12 +79,20 @@ allowed operations. Reading the final answer is distinguished from using another
 mechanism to carry intermediate computation.
 
 The [machine investigations](MACHINES.md) track CTAD, hidden copy plus overload
-resolution, and ambiguity-driven computation. **No complete isolated machine is
-currently demonstrated by the examples tracked there.** False idols establishes
+resolution, ambiguity-driven computation, and finite logic through object layout.
+**No complete isolated machine is currently demonstrated by the examples tracked
+there.** False idols establishes
 a finite SAT oracle; whether ambiguity can also drive recurrence and evolving
 state is a separate, open question.
 
 ## Read the spells
+
+Spell explainers live beside their sources with the same filename stem, such as
+[chromatic-aberration.md](chromatic-aberration.md) and
+[chromatic-aberration.cpp](chromatic-aberration.cpp). Start with its
+[step-by-step walkthrough](chromatic-aberration.md) to see how coloring five dots
+turns into arranging empty C++ objects. This convention starts with Chromatic
+aberration and extends to older spells as they are revisited.
 
 The [notes](NOTES.md) explain the mechanisms, limitations, known related work,
 and link to editable Godbolt examples.
@@ -106,3 +114,7 @@ g++-16 -std=c++20 -O2 -fsyntax-only chromatic-aberration.cpp
 Compiler executable names depend on your installation. The notes record each
 spell's checked versions and optimization levels; changes to evaluators or
 their limits can change the outcome.
+
+For collaboration, start with [AGENTS.md](AGENTS.md) and the
+[research handoff](working-notes/README.md). [PAPERCUTS.md](PAPERCUTS.md) records
+workflow friction and the workarounds already tried.
