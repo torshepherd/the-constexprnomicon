@@ -14,6 +14,12 @@ Read [AGENTS.md](../../AGENTS.md), [Pedantics](../../docs/Pedantics.md), and the
   simultaneous four-EiB objects with eight-byte target pointers, beyond a flat
   64-bit address space. Sparse aggregate initialization and symbolic allocation
   identities supply the mechanism; disabling constexpr caching preserves it.
+- Fresh exhaustive search: [out-of-left-field search](18-out-of-left-field-search.md).
+  Initializedness/bit-field storage was rejected as the same evaluator-metadata
+  family as Empty bits. A promising but unfinished structured-binding result
+  makes one unchanged type have two binding elements before an incomplete
+  `tuple_size` specialization is completed and three afterward. It has local
+  GCC 13.3 evidence only; no spell or portability claim exists yet.
 - [Machine investigations](../../docs/MACHINES.md) track demonstrated ingredients
   separately from complete isolated machines. No complete isolated machine is
   currently demonstrated by the examples tracked there. Apply Tor's isolation rules.
@@ -66,6 +72,10 @@ Read [AGENTS.md](../../AGENTS.md), [Pedantics](../../docs/Pedantics.md), and the
     reader-facing explainers, and updated reproduction commands.
 17. [Astral heap](17-astral-heap.md): a 32-EiB logical heap with eight-byte pointers,
     sparse aggregate initialization, the 32-bit counterpart, and rejection controls.
+18. [Out-of-left-field search](18-out-of-left-field-search.md): the exhaustive
+    post-Astral search, rejected recursive-arrow, appertainment, RTTI,
+    exceptions, initializedness, and implicit-object-creation directions, plus
+    the unfinished mid-file structured-binding phase shift.
 
 ## State at the original handoff
 

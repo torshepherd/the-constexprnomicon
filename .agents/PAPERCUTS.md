@@ -58,6 +58,7 @@ same discovery. Keep credentials and other sensitive data out of the log.
   assume command output is complete JSON after truncation.
 - **Status:** Worked around. Full existing file contents can be much larger than
   the diff being published.
+
 - **Seance recurrence:** Combining several long working notes into one command
   also truncated a read, obscuring part of the research-directions document.
   Re-read the missing section with a bounded `sed` range. Large discovery output
@@ -66,6 +67,79 @@ same discovery. Keep credentials and other sensitive data out of the log.
 - **Cleanup recurrence:** Printing several independent document reads in one
   orchestration result hit the outer output budget even when each individual
   command fit its own limit. Re-read the needed portions with bounded ranges.
+
+## 2026-09-09 — Public compiler upload blocked for an unpublished candidate
+
+- **Context:** The post-Astral search found a new structured-binding candidate
+  locally and attempted cross-compiler verification on public Compiler Explorer.
+- **Symptom:** Automatic approval review rejected the compile request because it
+  would disclose potentially novel, nonpublic source to an untrusted public
+  service. Earlier authorization to perform compiler research was not considered
+  explicit authorization for that disclosure.
+- **Cost:** GCC 16.2 and Clang 22.1 results could not be obtained in the session;
+  the candidate remains local-GCC-only evidence.
+- **Workaround:** None attempted. The user was told exactly why the upload was
+  blocked and asked for explicit permission. A locally available compiler is
+  also a safe future route.
+- **Status:** Open. Do not route around the decision or claim cross-compiler
+  acceptance until one of those routes is available.
+
+## 2026-09-09 — Direct push blocked despite repository workflow
+
+- **Context:** Saving the exhaustive post-Astral research handoff. Tor asked for
+  the findings to be committed to the repository, and `AGENTS.md` says completed
+  work is committed and pushed directly to `main` without a routine PR.
+- **Symptom:** Automatic approval review rejected `git push origin HEAD:main`,
+  classifying a default-branch push as a consequential remote mutation without
+  explicit authorization and suggesting a local commit or reviewable branch.
+- **Cost:** The complete local commit could not be published in the same pass;
+  another explicit user confirmation is required.
+- **Workaround:** None attempted. Record the refusal in the local commit and ask
+  Tor specifically for permission to push that exact commit directly to `main`.
+- **Status:** Open pending explicit confirmation. Do not use another interface or
+  branch as an indirect route around the decision.
+
+## 2026-09-09 — Stale Compiler Explorer request obscures probe identity
+
+- **Context:** Several small candidate mechanisms were tested in succession,
+  using JSON request files in `/tmp` for remote compilers.
+- **Symptom:** A later command reused a request filename without rebuilding it
+  from the named trinary-bit-field source. The reported remote status therefore
+  could not safely be attributed to that source.
+- **Cost:** The apparent remote result had to be discarded. Only the local
+  diagnostics and results with a traceable source/request pair were retained.
+- **Workaround:** Rebuild every request from the exact source immediately before
+  submission, use source-specific request/result filenames, and print a source
+  hash with future matrices.
+- **Status:** The ambiguous result is excluded from the research note and every
+  compiler claim. The trinary direction was independently rejected on conceptual
+  grounds before another remote run was needed.
+
+## 2026-09-09 — Malformed orchestration snippets interrupt research commands
+
+- **Context:** While moving rapidly among small compiler probes in the exhaustive
+  post-Astral search.
+- **Symptom:** Several code-mode calls contained malformed JavaScript or stray
+  placeholder text, and one otherwise valid command named a nonexistent scratch
+  working directory. The calls failed before performing useful research work;
+  one malformed shell command reached GCC but only produced irrelevant linker
+  errors.
+- **Cost:** Multiple failed calls and repeated submission of a simple local
+  compiler check.
+- **Workaround:** Stop batching while editing the command, use a small literal
+  `exec_command` object with the known checkout path, and inspect the exact
+  command before submission.
+- **Status:** Resolved for the remaining session. No repository file or compiler
+  evidence was produced by the malformed calls.
+
+- **Documentation recurrence:** The first patch creating the corrected trinary-
+  byte scratch source omitted a patch-line prefix and was rejected atomically.
+  Reissuing the small patch with every added line prefixed correctly succeeded;
+  no partial file was created.
+- **Audit recurrence:** A later bounded `sed` inspection accidentally included
+  a stray `-lol` shell command. The document read completed before the shell
+  reported that irrelevant command missing; the remaining range was re-read
+  cleanly rather than treating the combined exit status as a failed file read.
 
 ## 2026-09-09 — Only an older GCC is installed locally
 

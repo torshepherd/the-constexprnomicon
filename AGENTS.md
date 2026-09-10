@@ -53,6 +53,11 @@ A collection of small, artistic C++ experiments, often at compile time.
   attempted action, symptom or stated rejection reason, extra work, workaround,
   and status in `.agents/PAPERCUTS.md`. Update recurring entries; include the log
   in the session's commit. Do not include credentials.
+- Preserve **every research finding as it is explored** in the relevant
+  `.agents/notes/` handoff, including unsuccessful probes, weaker constructions,
+  duplicate-mechanism ideas, corrections, and reasons a candidate was not made
+  a reader-facing spell. “Discard” may mean excluding a candidate from the root
+  catalog; it must never mean deleting the research trail.
 - Credit related work and the human/AI collaboration. Independent derivation
   does not establish historical novelty. This repo has its own history:
   reference sorcery-cpp as the pre-AI original; do not import or rewrite its history.
