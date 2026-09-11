@@ -17,6 +17,9 @@ Read [AGENTS.md](../../AGENTS.md), [Pedantics](../../docs/Pedantics.md), and the
   September 11 follow-up: a single pointer carries a recoverable 65-bit value
   relative to the shared eight-array codebook. GCC's constantness probe identifies
   the bank; same-array subtraction recovers the offset. Local GCC 13.3 evidence.
+  Follow-up removes the builtin with a fixed tagged codebook: read the bank tag,
+  cast to its slot type, and subtract within the array. GCC 13.3 and 16.2 pass;
+  the authorized Godbolt retry also verifies the original pointer encoding.
 - Fresh exhaustive search: [out-of-left-field search](18-out-of-left-field-search.md).
   Initializedness/bit-field storage was rejected as the same evaluator-metadata
   family as Empty bits, but remains preserved, including corrected GCC/Clang

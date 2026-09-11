@@ -13,6 +13,46 @@
 - **Workaround/status:** Completed verification with local GCC 13.3 and clearly
   limited the evidence. Did not retry or indirectly route the blocked upload.
   Cross-version verification remains unperformed, not a failed compiler test.
+- **User clarification, September 11 (verbatim):** “Can you also jot down the fact that godbolt was blocked and why in papercuts markdown file? I need to correct that, this is a just-for-fun-public-repo, so I literally don’t care about pushing stuff up as public on godbolt.”
+  Tor explicitly authorizes sending this public repository's examples to
+  Compiler Explorer, including public Godbolt publication. The earlier rejection
+  records the reviewer's stated concern, not the repository's actual privacy or
+  Tor's preference. Apply this authorization to subsequent compiler checks.
+- **Resolved after clarification:** Retried the direct, authorized Compiler
+  Explorer POST. The original pointer-payload source passed `g162` at C++23/O2,
+  warnings/pedantic errors, cache depth zero: compiler code 0, empty diagnostics.
+  The subsequent builtin-free tagged-codebook source passed the same target and
+  flags. The upload restriction no longer blocked these requests. Recorded the
+  standing public-code authorization in `AGENTS.md` as well.
+
+## 2026-09-11 — Equivalent huge-array pointer spellings disagree on GCC
+
+- **Context:** Replacing Astral heap's constantness probe with a fixed bank tag
+  and a standard base-to-derived cast, then subtracting the bank's array base.
+- **Attempt/symptom:** For a 2^62-element `slot` array, forming the encoded pointer
+  with `&cells[index]` and subtracting the decayed `cells` pointer left a
+  non-constant subtraction in GCC 13.3. The same code passed with a 1024-element
+  array or offset 1. Pointer equality to the expected position also passed.
+- **Extra work:** Compared six bounded variants. `cells + index` with a decayed
+  `cells` subtraction base passed; `&cells[index]` with `&cells[0]` also passed.
+  Adding `+ 0` to the cast result did not fix the original mixed form. The first
+  complete codebook mixed `cells + index` with `&cells[0]` and failed even at
+  offset 1; using decay consistently fixed it.
+- **Workaround/status:** Retain `cells + offset` for encoding and decayed `cells`
+  for subtraction. The selected full source passes GCC 13.3 and 16.2. This is
+  observed expression-form sensitivity, not a C++ rule that the spellings differ.
+  No underlying compiler cause or bug-report result is established.
+
+## 2026-09-11 — Virtual-slot alternative exceeds the probe memory cap
+
+- **Context:** Trying virtual dispatch to identify an Astral heap bank without
+  a constantness probe; a simple virtual `bank()` returns seven.
+- **Attempt/symptom:** An array of 2^58 polymorphic slots failed GCC 13.3 with
+  `virtual memory exhausted` under the 512-MiB probe cap, after about 3.6 seconds.
+- **Workaround/status:** Did not raise the cap or retry a giant virtual array.
+  Nonvirtual slots with an ordinary fixed bank member initialize cheaply and
+  support the selected construction. No general impossibility claim for virtual
+  variants follows from this resource failure.
 
 ## 2026-09-11 — Discarded negative probes did not force the operation
 

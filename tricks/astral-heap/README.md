@@ -136,8 +136,10 @@ The follow-up passed **local GCC 13.3.0**, C++20/O0 and C++23/O2 with
 copying, reassignment, swapping, and two simultaneous values differing only in
 bit 64. Each sampled pointee remains zero. Direct cross-allocation subtraction,
 pointer-to-integer conversion, and decoding an unrelated allocation are separate
-intentional rejection controls. There is no newer-GCC or Clang result for this
-follow-up; the compiler table below concerns the original heap spell.
+intentional rejection controls. After Tor explicitly authorized public Godbolt
+uploads, this source also passed GCC 16.2 at C++23/O2 with caching disabled.
+There is no Clang result for this follow-up; the compiler table below concerns
+the original heap spell.
 
 ```sh
 g++ -std=c++20 -O0 -Wall -Wextra -pedantic-errors -fsyntax-only tricks/astral-heap/experiments/pointer-payload.cpp
@@ -146,6 +148,90 @@ g++ -std=c++23 -O2 -Wall -Wextra -pedantic-errors -fconstexpr-cache-depth=0 -fsy
 
 Add `-DBAD_SUBTRACTION`, `-DBAD_PUN`, or `-DUNKNOWN_POINTER` separately to the
 C++20/O0 command to reproduce the expected rejections.
+
+## Removing the builtin: label the banks
+
+The constantness probe is **not necessary** if we give the fixed codebook
+ordinary bank labels. The complete
+[tagged-pointer-payload.cpp](experiments/tagged-pointer-payload.cpp) uses no
+compiler builtins, pointer-to-integer conversion, or reinterpretation.
+
+First, make each slot carry its bank's fixed label:
+
+```cpp
+struct cell { const unsigned char bank; };
+
+template<unsigned Bank>
+struct slot : cell {
+    constexpr slot() : cell{Bank} {}
+};
+```
+
+Each of the eight banks contains an array of 2^62 of its own slot type:
+`slot<0>`, `slot<1>`, and so on. A slot still occupies one byte on the checked
+target. Bank zero is all zeroes; bank seven is all sevens. GCC handles these
+uniform initializations cheaply, including the nonzero labels. No filling loop
+over the array appears in our source, and the tests raise no constexpr limits.
+
+An encoded value has the common type `cell const*`. Encoding still just chooses
+a bank and an offset; it never modifies the arrays. To decode:
+
+1. Read `p->bank`: this supplies the three bank bits with an ordinary member read.
+2. Dispatch to the corresponding bank type. Within the branch for bank `B`, use
+   `static_cast<slot<B> const*>(p)` to recover the pointer to its array element.
+3. Subtract that bank's array base to recover the 62-bit offset.
+
+The cast matters. `p` points to a **base subobject** of a slot; subtracting such
+base pointers as if they formed a `cell[]` would be wrong. The selected downcast
+returns the actual `slot<B>` array-element pointer, so the subsequent subtraction
+is within its real array. These are ordinary
+[base-to-derived casts](https://eel.is/c++draft/expr.static.cast) and
+[same-array subtraction](https://eel.is/c++draft/expr.add).
+
+The source uses a small fold expression to dispatch among the eight bank types.
+Those template parameters define the fixed bank vocabulary, not the changing
+65-bit payload. Inputs are ordinary function arguments, and independently
+encoded pointers of the same type can hold different values.
+
+This preserves the useful property of the first construction: **one pointer
+selects among 2^65 positions in one unchanged, shared codebook**. The supporting
+arrays now contain fixed labels rather than all zeroes. This is not allocating
+a separate integer object for each value: repeated encoding, reassignment,
+copying, and swapping do not change any label or allocate another bank.
+
+The source passes local GCC 13.3 (C++20/O0 and C++23/O2, cache depth zero) and
+Compiler Explorer GCC 16.2 (C++23/O2, cache depth zero), all with
+`-Wall -Wextra -pedantic-errors`. The same 512 bank/offset round trips pass,
+along with copies, swaps, opposite high bits, and untouched far label reads.
+Local runs complete in about 0.05 seconds under a 512-MiB virtual-memory cap.
+
+[tagged-controls.cpp](experiments/tagged-controls.cpp) also returns a decoded
+`{true, 0xfedcba9876543210ull}` beyond the evaluation after the arrays have been
+freed. Its local GCC controls reject a wrong-bank downcast and decoding against
+a different codebook's allocation. The decoder's precondition is a pointer
+encoded by the same live codebook, not an arbitrary pointer. Encoded pointers
+remain transient, and the shared supporting storage still counts.
+
+```sh
+g++ -std=c++20 -O0 -Wall -Wextra -pedantic-errors -fsyntax-only tricks/astral-heap/experiments/tagged-pointer-payload.cpp
+g++ -std=c++23 -O2 -Wall -Wextra -pedantic-errors -fconstexpr-cache-depth=0 -fsyntax-only tricks/astral-heap/experiments/tagged-pointer-payload.cpp
+g++ -std=c++23 -O0 -Wall -Wextra -pedantic-errors -fsyntax-only tricks/astral-heap/experiments/tagged-controls.cpp
+```
+
+Add `-DWRONG_BANK_CAST` or `-DWRONG_CODEBOOK` separately to the final command
+for intentional rejections. Keep the pointer spellings from the source:
+`cells + offset` for encoding and decayed `cells` for subtraction. The research
+notes record GCC rejecting some equivalent mixed spellings for these giant
+arrays. Ordinary C++ operations do not guarantee portable support for a 32-EiB
+logical heap; the giant sparse initialization remains implementation-dependent.
+
+For the **unchanged, all-zero** codebook, an equality-only decoder is possible
+in principle: compare against all eight bases, decrement the pointer if none
+matches, and repeat. All operations stay within the pointed-to array. A small
+offset probe passes, but a worst-case 62-bit offset requires roughly 2^62 rounds.
+The tagged version supplies a practical decoder without that scan. Direct `<`,
+`std::less`, and `std::compare_three_way` did not supply an alternative ordering
+of independent allocations in the tested GCC constant evaluation.
 
 ## Evidence and limits
 

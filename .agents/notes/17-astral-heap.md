@@ -223,3 +223,141 @@ Read current GCC builtin documentation and draft `expr.add` for the exact
 non-evaluation and subtraction rules; links are in the explainer. The research
 did not attempt a builtin-free bank decoder, runtime giant allocations, or a
 new isolated computational machine. No pending follow-up is implied.
+
+## September 11 follow-up: remove the constantness builtin
+
+Tor asked verbatim:
+
+> That is very cool! But that still depends on builtin constant p. Is that a necessary part of this process? It’s ok if the answer is yes but it’d be cooler if no ;)
+>
+> Can you also jot down the fact that godbolt was blocked and why in papercuts markdown file? I need to correct that, this is a just-for-fun-public-repo, so I literally don’t care about pushing stuff up as public on godbolt.
+
+**Result:** the [tagged-codebook source](../../tricks/astral-heap/experiments/tagged-pointer-payload.cpp)
+uses no compiler builtins and still encodes 65 bits in one eight-byte pointer,
+relative to the shared codebook. Each bank contains 2^62 one-byte `slot<Bank>`
+objects, derived from a common `cell` containing `const unsigned char bank`.
+The slot constructor supplies its bank's fixed tag. GCC handles the entire
+uniform array cheaply without visiting every logical element in the test.
+
+The pointer is `cell const*`. Read its fixed bank field; dispatch to that bank's
+static slot type; use an ordinary base-to-derived `static_cast` to recover the
+array element pointer; then subtract that array's base. The tag is never changed,
+and all numbers share the same eight fixed arrays. Only the encoded pointer
+changes when its value changes. The parent README explains the steps and limits.
+
+The design changes the codebook's contents from all zeroes to fixed bank labels.
+Do not call it a builtin-free decoder for the unchanged zero-filled representation.
+It remains a codebook construction rather than self-contained compression: the
+arrays and eight owning base pointers are supporting storage. The pointer's
+65-bit choice is made against one fixed context, with no per-number heap object
+or writable payload in the codebook. Fixed template parameters identify bank
+types; an ordinary function argument supplies the changing value.
+
+### Search trail, including weaker and unsuccessful routes
+
+- **Ordering:** Tested direct `<`, `std::less<char*>`, `std::less<>`, and
+  `std::compare_three_way` between two separately allocated small char arrays.
+  All four reject on local GCC 13.3 at C++23/O2 with warnings and pedantic errors.
+  The comparison's result was required in a returned integer, avoiding the
+  earlier discarded-expression trap. Local libstdc++ uses ordinary `<` during
+  constant evaluation for pointer `std::less`; its runtime integer conversion
+  is not a constexpr escape. No claim that every library/compiler must reject
+  every such ordering follows. Read draft `expr.rel` and `comparisons`.
+- **Equality only:** The original zero-filled banks can be decoded by walking
+  a valid pointer backward until it equals one of the bank bases. This needs
+  no unsupported arithmetic or probe, but up to 2^62-1 decrements and eight
+  equality checks per round. A standalone source tested all eight giant banks
+  at offset 42 on GCC 13.3/C++20/O0 and passed. No huge-offset scan was attempted.
+  Thus the builtin is not logically necessary even for the original codebook;
+  the issue there is a practical decoder across the full domain. Core loop:
+
+  ```cpp
+  unsigned long long offset = 0;
+  for (;;) {
+      for (unsigned bank = 0; bank < 8; ++bank)
+          if (p == worlds[bank]->bytes) return decoded{bank, offset};
+      --p;
+      ++offset;
+  }
+  ```
+
+- **Uniform nonzero data:** A tiny probe used
+  `struct cell { unsigned char bank = 7; };`
+  and a `cell bytes[1ull << 62]` member. `new realm{}`, reading the last member
+  as seven, and deletion passed GCC 13.3/C++23/O2 in about 0.01 seconds. This
+  disproved the working hypothesis that every nonzero uniform initialization
+  would require an enormous constructor loop. Preserve that correction.
+- **Common pointer type:** A distinct tagged cell type per bank cannot just
+  expose its byte member as a `char*` and subtract those member pointers as if
+  they were a `char[]`. A real common base, followed by a correctly selected
+  downcast to the actual slot type, provides the ordinary-C++ bridge. The first
+  tested version used `struct tagged<B> : cell` with `cell{B}` in its constructor;
+  the final source nests `slot` inside `realm<B>`. No void-pointer or
+  reinterpretation accommodation is involved.
+- **Virtual tag alternative:** A polymorphic `cell` with virtual constexpr
+  `bank()` returning seven, in a 2^58-element array, exhausted the local 512-MiB
+  virtual-memory cap after about 3.6 seconds. It was not retried with larger
+  limits. This was a resource failure, not a language rejection or proof that
+  no virtual construction can work.
+- **Lazy writable tags:** Considered writing the bank number to the selected
+  byte during encoding. That would remove the probe, but change supporting
+  memory when values are encoded. No such implementation was needed or tested:
+  fixed uniform tags supply the stronger unchanged-codebook result.
+- **Giant pointer expression spellings:** The first one-bank tag probe formed
+  `p = &world->bytes[extent - 123]` and subtracted decayed `world->bytes` after
+  the downcast. GCC left the subtraction non-constant. Six bounded controls:
+  smaller 1024-element array passes; `world->bytes + extent - 123` passes;
+  subtracting `&world->bytes[0]` from the original indexed pointer passes;
+  adding `+0` to the downcast still fails; equality with the expected pointer
+  passes; offset one passes. The first full eight-bank draft encoded with
+  pointer addition but subtracted `&cells[0]` and failed at offset one. Using
+  array decay consistently in the encoder and decoder passed. This is compiler
+  expression-form sensitivity, not a standard distinction or an established
+  diagnosis of its implementation cause. The selected source retains the
+  working forms; the papercut log records this too.
+- An inheritance/default-member sketch with an extra unused tag member was
+  written but neither compiled nor pursued after the real common-base
+  constructor worked. It supplied no evidence or additional mechanism.
+
+### Final evidence and scope
+
+The standalone tagged source checks 512 bank/offset round trips, pointer copies
+after reassignment, swaps, two values with opposite bit 64 and equal low bits,
+and far untouched tag reads from banks three and seven. It deletes its owning
+codebook copy constructor and assignment; encoded pointer copies remain normal.
+`sizeof(cell*) == 8`, `sizeof(slot<7>) == 1`, and the four-EiB block size are
+asserted. The separate [controls](../../tricks/astral-heap/experiments/tagged-controls.cpp)
+return an ordinary `{true, 0xfedcba9876543210ull}` after releasing all banks.
+
+- Local GCC 13.3: tagged main source C++20/O0 and C++23/O2 with cache depth zero,
+  warnings/pedantic errors, syntax-only. Both pass without diagnostics, about
+  0.05 seconds per run. All local probes inherit 512-MiB address-space and
+  10–15-second CPU caps; parent timeouts are 12–20 seconds. No compiler resource
+  limits were increased.
+- Compiler Explorer `g162`: tagged main source, C++23/O2,
+  `-Wall -Wextra -pedantic-errors -fconstexpr-cache-depth=0`. Code zero and empty
+  stdout/stderr. No giant Clang array was retried: the original investigation
+  already established its type-size rejection.
+- Local GCC 13.3/C++23/O0: the scalar-result control passes. `WRONG_BANK_CAST`
+  rejects reading through a downcast to the wrong slot type. `WRONG_CODEBOOK`
+  rejects subtraction against an allocation owned by another live codebook.
+  These are required-value probes, not discarded forbidden operations.
+- The published original builtin-based `pointer-payload.cpp` was also sent to
+  `g162` after Tor's authorization; C++23/O2, warnings/pedantic errors, cache
+  depth zero: code zero, empty diagnostics. This supersedes the earlier
+  local-only evidence limitation, without rewriting the historical rejection.
+
+Read draft `expr.static.cast` for the actual base-to-derived pointer conversion
+and `expr.add` for subtraction within the actual slot array. The source uses
+ordinary C++20 operations, but giant array limits, cheap uniform initialization,
+and pointer expression-form sensitivity remain compiler implementation issues.
+No all-compilers portability or historical-first claim is made.
+
+### Godbolt authorization
+
+The earlier upload rejection and its stated private-code disclosure concern
+were already committed in `.agents/PAPERCUTS.md`. Added Tor's clarification
+verbatim there, recorded public-code authorization in `AGENTS.md`, and retried
+the same direct Compiler Explorer upload after that authorization. It succeeded
+for both constructions. This was an authorized retry, not an indirect route
+around the earlier rejection. No further approval or compiler check is pending.

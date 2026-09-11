@@ -47,6 +47,9 @@ A collection of small, artistic C++ experiments, often at compile time.
 - Verify changed spells on their named compiler and record version, flags, and
   outcome. Compiler acceptance is evidence, not proof of ISO portability.
   For pure moves, verify source identity and relocated includes/commands.
+- This is Tor's just-for-fun public repository. He explicitly authorizes sending
+  its examples to Compiler Explorer/Godbolt, including public share links
+  (September 11, 2026). Do not infer a private-source restriction for these files.
 - Write down and commit **every observed papercut**, including minor friction
   and successful workarounds: refusals or approval surprises, failed commands,
   missing tools, confusing behavior, retries, and extra steps. Record context,
