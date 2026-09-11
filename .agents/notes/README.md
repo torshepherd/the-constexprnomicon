@@ -14,6 +14,9 @@ Read [AGENTS.md](../../AGENTS.md), [Pedantics](../../docs/Pedantics.md), and the
   simultaneous four-EiB objects with eight-byte target pointers, beyond a flat
   64-bit address space. Sparse aggregate initialization and symbolic allocation
   identities supply the mechanism; disabling constexpr caching preserves it.
+  September 11 follow-up: a single pointer carries a recoverable 65-bit value
+  relative to the shared eight-array codebook. GCC's constantness probe identifies
+  the bank; same-array subtraction recovers the offset. Local GCC 13.3 evidence.
 - Fresh exhaustive search: [out-of-left-field search](18-out-of-left-field-search.md).
   Initializedness/bit-field storage was rejected as the same evaluator-metadata
   family as Empty bits, but remains preserved, including corrected GCC/Clang

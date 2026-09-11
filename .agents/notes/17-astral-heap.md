@@ -141,3 +141,85 @@ upgrade a limited prior-art search into a historical-priority claim.
 No roughly-Turing claim, new isolated machine, runtime allocation stress test,
 or further container project is implied. The spell is deliberately complete at
 this boundary; the tabled zero-storage owning vector stays tabled.
+
+## September 11 follow-up: recoverable pointer payload
+
+Tor asked verbatim:
+
+> Can you read up on “astral heap”? Very weird finding in this report that you can have a 65 bit address space at compile time even though pointers are 8 bytes at runtime. Does this give us a mechanism for storing more information than it appears, similar to the “zero size integer” trick? My assumption is that this is not workable due to the constraint of “no pointer punning at compile time”
+
+**Result:** yes, with a shared codebook and GCC's constantness probe. The
+[retained source](../../tricks/astral-heap/experiments/pointer-payload.cpp) maps
+`{bool high, uint64-like low}` to one byte pointer using three bank bits and
+62 offset bits. Recover the bank with
+`__builtin_constant_p(p - worlds[bank]->bytes)`, then perform the matching
+same-array subtraction. Pointer-to-integer conversion is unnecessary.
+
+This is an application of Astral heap plus the already-used constantness-probe
+technique, not a newly discovered compiler builtin or a historical-first claim.
+The codebook is eight fixed, simultaneously live, separately allocated arrays.
+All are zero-initialized and no payload byte is written. It is shared among
+encoded values and does not change when values are encoded, copied, reassigned,
+or swapped. A pointer can therefore select any of 2^65 positions against the
+same context. The construction is more specific than merely storing an integer
+in a heap object and pointing to it.
+
+### Bounded derivation and verification
+
+- First probe allocated two realms, chose `b->bytes + extent - 123`, and checked
+  that subtraction from `a->bytes` was not constant to the builtin, subtraction
+  from `b->bytes` was, and the latter recovered the offset. GCC 13.3 accepted at
+  C++23/O0 with constexpr caching disabled.
+- The retained source checks 8 banks times 64 offset patterns (each single bit,
+  zero, maximum), decoding pointer copies after reassigning the original. It also
+  checks two independent values with identical low 64 bits and opposite high
+  bits, swaps them, and verifies unchanged zero pointees.
+- Final positive runs: GCC `13.3.0`, C++20/O0 and C++23/O2 with
+  `-fconstexpr-cache-depth=0`. Both code 0, no diagnostics, around 0.025 seconds.
+  All runs use `-Wall -Wextra -pedantic-errors -fsyntax-only`, a 512-MiB address
+  space cap, 15-second CPU cap, and 20-second parent timeout. No compiler limits
+  were increased.
+- Final negative runs: GCC 13.3, C++23/O0, same warnings and resource caps.
+  `BAD_SUBTRACTION` rejects the evaluated subtraction between different
+  allocations; `BAD_PUN` rejects pointer-to-arithmetic conversion;
+  `UNKNOWN_POINTER` reaches the decoder's throw for a ninth, unrelated allocation.
+  Each returns compiler code 1 with the corresponding diagnostic, around
+  0.024–0.029 seconds.
+- Initial negative controls merely cast the forbidden expression to `void`.
+  GCC accepted both discarded computations. This was insufficient to force the
+  operation; changing each to contribute to the final `okay` result made both
+  reject as intended. Keep this correction, not the initial expected verdict.
+- Compiler Explorer discovery returned `g162`, `g133`, `g122`, and `clang2210`.
+  The request to compile the new source with `g162` was blocked by automatic
+  approval review as disclosure of locally sourced repository code to an
+  untrusted service. No remote compiler verdict exists, and the blocked upload
+  was not retried via another route. Local evidence suffices for this finding.
+
+### Interpretation and boundaries
+
+The reader-facing walkthrough is in the parent README. Keep these distinctions:
+
+1. The value's representation is an eight-byte target pointer, but its decoder
+   needs the shared 64-byte base-pointer table and the eight logical arrays.
+   It is not a self-contained eight-byte total-storage replacement for `uint65`.
+2. The extra information is allocation identity plus offset. `sizeof` describes
+   target layout, not the evaluator's internal symbolic value representation.
+   P0784R1 supplies historical background for metadata-rich constexpr pointers.
+3. Ordinary pointer-value copies retain identity and offset, unlike copying the
+   Empty bits wrapper whose lifetime state is associated with its subobjects.
+4. The builtin is a GCC extension, and its documented zero return is not a
+   general proof of invalidity. The bank test is empirically established for
+   these live allocations and pointers. Decode only encoded interior pointers;
+   there is no general arbitrary-pointer validator or one-past encoding here.
+5. Integer-to-chosen-symbolic-pointer encoding does not solve arbitrary-pointer
+   bit extraction, does not revive the empty owning vector, and cannot export
+   the allocated codebook or its pointer values to runtime. A decoded ordinary
+   scalar/aggregate result can leave constant evaluation.
+6. Eight banks establish 65 recoverable bits; no universal 65-bit evaluator cap
+   follows. More banks would add choices with more setup and linear decoding
+   work. No expanded-bank construction was tested in this session.
+
+Read current GCC builtin documentation and draft `expr.add` for the exact
+non-evaluation and subtraction rules; links are in the explainer. The research
+did not attempt a builtin-free bank decoder, runtime giant allocations, or a
+new isolated computational machine. No pending follow-up is implied.

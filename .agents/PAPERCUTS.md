@@ -1,5 +1,46 @@
 # Papercuts
 
+## 2026-09-11 — Godbolt follow-up upload blocked by automatic review
+
+- **Context:** Checking the Astral heap pointer-payload construction on GCC 16.2
+  after successful local GCC 13.3 checks, using the Godbolt API skill.
+- **Attempt/symptom:** Compiler discovery succeeded; the direct POST of the new
+  source was rejected by automatic approval review, which classified it as
+  uploading locally sourced repository code to an untrusted service without
+  user authorization for that disclosure.
+- **Cost:** No newer-compiler verdict; a combined orchestration call ended at
+  the rejection, so its dependent result-read step did not execute.
+- **Workaround/status:** Completed verification with local GCC 13.3 and clearly
+  limited the evidence. Did not retry or indirectly route the blocked upload.
+  Cross-version verification remains unperformed, not a failed compiler test.
+
+## 2026-09-11 — Discarded negative probes did not force the operation
+
+- **Context:** Pointer-payload controls for direct cross-allocation subtraction
+  and pointer-to-integer conversion during required constant evaluation.
+- **Attempt/symptom:** `(void)(a - other_base)` and `(void)reinterpret_cast<...>(a)`
+  were accepted on GCC 13.3, contrary to the initial expected rejection.
+- **Cost:** Two inadequate controls and a bounded correction/recheck.
+- **Workaround/status:** Make the computed values contribute to the boolean
+  asserted by `static_assert`; both then reject with the intended diagnostic.
+  Preserve the distinction between a discarded expression and required value
+  computation; acceptance of the former did not expose a numeric address.
+
+## 2026-09-11 — Broad discovery and commit output swamped relevant details
+
+- **Context:** Finding Astral heap and obtaining the current GitHub parent.
+- **Attempt/symptom:** Printing descriptions for all search/GitHub tools, then
+  an entire fetch-commit response, produced large, truncated output (the commit
+  response included its full diff). Needed relevant web details again afterward.
+- **Cost:** Extra retrieval and avoidable context/output volume.
+- **Workaround/status:** Filter tool discovery to exact needed names and retain
+  structured responses while printing only SHA/tree/title metadata. Repository
+  files located via `rg` supplied the actual report; broad web search did not.
+- **Publication recurrence:** Reading all five complete file snapshots as one
+  JSON command result exceeded the output budget and made `JSON.parse` fail on
+  the truncation notice. Load each file separately into the orchestration store
+  before sending the single tree update; do not interpret truncated JSON.
+
 Small things that cost collaborators time: refusals, confusing tool behavior,
 missing capabilities, failed approaches, extra steps, and workarounds. Tor
 requested this log on September 9, 2026. Record minor friction too, including

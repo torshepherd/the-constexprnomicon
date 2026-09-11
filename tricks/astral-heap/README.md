@@ -71,6 +71,82 @@ capacity. It is independent of the GCC memoization spell: disabling constexpr
 function caching preserves the result. No lifetime probe or mutable compiler
 cache is used.
 
+## Follow-up: a 65-bit value in one eight-byte pointer
+
+Yes, the extra symbolic address information can carry a recoverable payload.
+[pointer-payload.cpp](experiments/pointer-payload.cpp) uses the eight arrays as
+a shared, immutable codebook. An encoded value is just an `unsigned char*`:
+
+```cpp
+// bank has 3 bits; offset has 62 bits.
+auto p = worlds[bank]->bytes + offset;
+```
+
+That selects one of `8 * 2^62 = 2^65` interior byte positions. No array element
+is written to encode a value. Many independent pointer values can share the
+same eight arrays; copying or swapping those pointers preserves the payload.
+
+The missing operation was recovering the bank without converting the pointer
+to an integer. On the tested GCC, this probe provides it:
+
+```cpp
+for (unsigned bank = 0; bank < 8; ++bank)
+    if (__builtin_constant_p(p - worlds[bank]->bytes)) {
+        auto offset = p - worlds[bank]->bytes;
+        // bank and offset recover the original 65 bits.
+    }
+```
+
+Subtracting pointers within the same array gives their index difference;
+subtracting pointers into different arrays is undefined.
+[Pointer subtraction](https://eel.is/c++draft/expr.add).
+Here GCC returns zero from the builtin for a different array, and one for the
+matching array. Only the matching subtraction is then evaluated normally.
+GCC documents that the builtin's operand is not evaluated, and that zero means
+it could not establish a constant, not that it proved an expression invalid.
+[Builtin documentation](https://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html).
+The particular bank-discrimination behavior is compiler evidence, not a general
+pointer-validity API or an ISO guarantee.
+
+The source accepts an ordinary `{bool high, unsigned long long low}` input and
+recovers both fields from the pointer. The extra bit is not a template argument
+or a second member alongside the encoded pointer. Its decoder is for interior
+pointers returned by its encoder, while the shared codebook remains alive.
+
+The costs and boundaries matter:
+
+- Each encoded value is one eight-byte pointer. The shared context additionally
+  contains eight base pointers (64 target bytes) and eight huge logical arrays,
+  represented sparsely by GCC. This is not eight bytes of total compiler memory.
+- Unlike Empty bits' lifetime state, ordinary pointer value copies preserve this
+  encoding. It still uses evaluator metadata rather than extra runtime bits.
+- This encodes a chosen integer as a symbolic pointer. It does not serialize
+  an arbitrary pointer's representation, permit pointer punning, or solve the
+  tabled empty owning vector problem.
+- The encoded pointer and its allocated codebook stay inside one constant
+  evaluation. Decode to ordinary values before releasing the arrays. There is
+  no 65-bit runtime pointer or runtime compression claim.
+- Eight arrays give 65 bits; the original demonstration does not establish a
+  65-bit limit on GCC's evaluator. More banks would add choices and setup/search
+  cost. Larger-bank variants have not been tested here.
+
+The follow-up passed **local GCC 13.3.0**, C++20/O0 and C++23/O2 with
+`-fconstexpr-cache-depth=0`, using warnings and pedantic errors. Assertions check
+512 round trips spanning every bank, every offset bit, zero and maximum offsets,
+copying, reassignment, swapping, and two simultaneous values differing only in
+bit 64. Each sampled pointee remains zero. Direct cross-allocation subtraction,
+pointer-to-integer conversion, and decoding an unrelated allocation are separate
+intentional rejection controls. There is no newer-GCC or Clang result for this
+follow-up; the compiler table below concerns the original heap spell.
+
+```sh
+g++ -std=c++20 -O0 -Wall -Wextra -pedantic-errors -fsyntax-only tricks/astral-heap/experiments/pointer-payload.cpp
+g++ -std=c++23 -O2 -Wall -Wextra -pedantic-errors -fconstexpr-cache-depth=0 -fsyntax-only tricks/astral-heap/experiments/pointer-payload.cpp
+```
+
+Add `-DBAD_SUBTRACTION`, `-DBAD_PUN`, or `-DUNKNOWN_POINTER` separately to the
+C++20/O0 command to reproduce the expected rejections.
+
 ## Evidence and limits
 
 Successful checks used `-Wall -Wextra -pedantic-errors`; local checks also used
