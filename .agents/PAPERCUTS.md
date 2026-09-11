@@ -68,6 +68,11 @@ same discovery. Keep credentials and other sensitive data out of the log.
   orchestration result hit the outer output budget even when each individual
   command fit its own limit. Re-read the needed portions with bounded ranges.
 
+- **Phase-shift recurrence (September 10):** A combined read of instructions,
+  notes, and papercuts again exceeded the outer output budget. Follow-up reads
+  used bounded ranges and focused searches. Avoid aggregating long documents
+  merely because their individual command budgets are large enough.
+
 ## 2026-09-09 — Public compiler upload blocked for an unpublished candidate
 
 - **Context:** The post-Astral search found a new structured-binding candidate
@@ -84,6 +89,13 @@ same discovery. Keep credentials and other sensitive data out of the log.
 - **Status:** Open. Do not route around the decision or claim cross-compiler
   acceptance until one of those routes is available.
 
+- **September 10 resolution for the main example:** Tor subsequently explicitly
+  authorized publishing the source-containing commit to public `main`. After
+  publication, the exact already-public source was compiled successfully on
+  GCC 16.2 and Clang 22.1.0; its SHA-256 is recorded in note 19. This is not
+  permission to upload arbitrary unpublished follow-up probes. Those were
+  checked locally, and no permanent Godbolt shortlink was requested.
+
 ## 2026-09-09 — Direct push blocked despite repository workflow
 
 - **Context:** Saving the exhaustive post-Astral research handoff. Tor asked for
@@ -99,21 +111,27 @@ same discovery. Keep credentials and other sensitive data out of the log.
 - **Status:** Open pending explicit confirmation. Do not use another interface or
   branch as an indirect route around the decision.
 
-## 2026-09-09 — Stale Compiler Explorer request obscures probe identity
+- **Resolved after explicit confirmation:** Tor said, "Push commit 7f5f42b
+  directly to main". The connected GitHub app published the identical tree as
+  `53252b3`; differing commit metadata produced a different commit SHA. The
+  original local commit is retained on `research-backup-7f5f42b`. After checking
+  matching trees and a clean checkout, local history was aligned to published
+  `main`. The shell credential limitation remains as recorded above.
 
-- **Context:** Several small candidate mechanisms were tested in succession,
-  using JSON request files in `/tmp` for remote compilers.
-- **Symptom:** A later command reused a request filename without rebuilding it
-  from the named trinary-bit-field source. The reported remote status therefore
-  could not safely be attributed to that source.
-- **Cost:** The apparent remote result had to be discarded. Only the local
-  diagnostics and results with a traceable source/request pair were retained.
-- **Workaround:** Rebuild every request from the exact source immediately before
-  submission, use source-specific request/result filenames, and print a source
-  hash with future matrices.
-- **Status:** The ambiguous result is excluded from the research note and every
-  compiler claim. The trinary direction was independently rejected on conceptual
-  grounds before another remote run was needed.
+## 2026-09-10–11 — Research-note audit corrects source and evidence transcription
+
+- **Context:** Auditing note 18 while resuming the phase-shift candidate.
+- **Symptom:** The note replaced a successful `typeid` operand's glvalue with a
+  prvalue, changing its semantics. It also incorrectly described the trinary
+  remote request as stale and excluded its GCC/Clang outcomes, although the
+  session record showed a source-specific request being rebuilt.
+- **Cost:** Extra comparison against the session record and a corrected-source
+  check. The earlier stale-request papercut was itself a documentation mistake,
+  not an established tool failure; this entry corrects that claim explicitly.
+- **Workaround:** Restore the reference operand and remote evidence; retain the
+  rejected conceptual direction. Use exact sources and source hashes for new
+  verification, and distinguish reconstructed prose from actual compiler output.
+- **Status:** Corrected in notes 18 and 19. No rejected finding was deleted.
 
 ## 2026-09-09 — Malformed orchestration snippets interrupt research commands
 
@@ -154,6 +172,12 @@ same discovery. Keep credentials and other sensitive data out of the log.
 - **Status:** Local Clang was not installed. Check availability once when entering
   a new environment; these are observations about this workspace, not a permanent
   limitation of Work or evidence that Clang rejects the spell.
+
+- **Phase-shift recurrence (September 10):** No local Clang was found. An
+  attempted `apt-get update -qq` failed on uid/gid, group, and ownership operations
+  with permission/capability errors. No installation followed, and no sandbox
+  settings were weakened. New follow-up probes remain GCC 13.3-only; the exact
+  already-public main source was verified remotely as described above.
 - **Seance recurrence:** The fresh workspace again had GCC 13.3 and no `clang++`.
   A version check confirmed the missing executable. Remote GCC 16.2 and Clang
   22.1.0 compiled and executed both new sources successfully; no local compiler
@@ -333,6 +357,11 @@ same discovery. Keep credentials and other sensitive data out of the log.
   the source, controls, and handoff did not need reconstruction.
 - **Status:** Resolved. Never depend on temporary request/result files as the only
   record of an expensive investigation.
+
+- **Phase-shift recurrence (September 10):** Earlier search `/tmp` probes were
+  again absent when inspected. Recovered the main example from the committed
+  note instead of assuming those files still existed. New probes were created
+  in workspace scratch and then retained under the spell's `experiments/` folder.
 
 ## 2026-09-09 — Optional constant folding changes a cache control's expectation
 

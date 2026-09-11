@@ -5,6 +5,11 @@ Astral heap, not another extension of an existing mechanism. This note preserves
 the broad search, concrete probes, rejected candidates, and the one promising
 unfinished result. No new reader-facing spell was selected in this session.
 
+September 10–11 follow-up: [Phase shift](../../tricks/phase-shift/) now has a
+standalone source, walkthrough, cross-compiler main-source evidence, and retained
+controls. [Note 19](19-phase-shift.md) records that bounded continuation and
+corrections to this note's `typeid` transcription and trinary evidence.
+
 ## The bar and exclusions
 
 Tor restated the two useful targets:
@@ -140,7 +145,8 @@ struct poly { virtual constexpr ~poly() = default; };
 template<class T>
 constexpr int probe() {
     int n = 0;
-    (void)typeid((++n, T{}));
+    T object{};
+    (void)typeid((++n, static_cast<T&>(object)));
     return n;
 }
 
@@ -151,9 +157,10 @@ static_assert(probe<poly>() == 1);
 The function-returning-`T&` phrasing was reasoned from the same rule but was not
 separately compiled in this session.
 
-Primary rule: [`typeid`](https://eel.is/c++draft/expr.typeid) applies temporary
-materialization to a prvalue, evaluates a polymorphic glvalue to determine its
-dynamic type, and otherwise treats the expression as an unevaluated operand.
+Correction: an earlier transcription used `T{}` instead of the object reference
+above. That prvalue does not provide the evaluated polymorphic-glvalue case and
+does not justify the second assertion. The distinction is essential, not just
+a syntactic reduction. See the [`typeid` rule](https://eel.is/c++draft/expr.typeid).
 
 ### C++26 constexpr exceptions
 
@@ -203,8 +210,8 @@ The first concrete prototype used `unsigned` bit-fields and did **not** establis
 the one-byte result: local GCC gave the class size four, and the hand-calculated
 mixed ternary assertion was also wrong.
 
-After Tor clarified that rejected headline candidates must still be preserved,
-the corrected `unsigned char`-bit-field probe was completed. GCC 13.3 accepted
+The corrected `unsigned char`-bit-field probe was completed before the
+same-mechanism rejection. GCC 13.3 accepted
 all of the following with C++20 and C++23, O0 and O2, warnings, and pedantic
 errors enabled:
 
@@ -212,10 +219,17 @@ errors enabled:
 - eight untouched fields read logically as `22222222` base three, or 6560;
 - assigning `b0 = 0` and `b1 = 1` produces `22222210` base three, or 6555.
 
-Thus the **eight-trits-in-one-byte result is a real local GCC finding**. The
+Thus the **eight-trits-in-one-byte result is a real finding**. The
 unknown state can be changed to zero or one, and an initialized field can change
 between zero and one. No operation to restore one field independently to the
-unknown state was demonstrated. Cross-compiler evidence was not obtained.
+unknown state was demonstrated. Source-specific Compiler Explorer requests also
+reported acceptance on GCC 16.2 (`g162`) and Clang 22.1.0 (`clang2210`) with
+`-std=c++23 -O2 -Wall -Wextra -pedantic-errors`.
+
+Evidence correction: the first documentation pass incorrectly called the
+trinary request stale and omitted those remote verdicts. Reviewing the session
+record showed that its request had been rebuilt from the corrected source.
+The conceptual rejection below is unaffected by this correction.
 
 The corrected source was:
 
@@ -424,18 +438,23 @@ structured bindings, or for a struct changing decomposition mid-file, found
 general structured-binding customization material but no verified exact match.
 That limited search does not establish historical novelty.
 
-Cross-compiler verification is intentionally unfinished. A request to send the
-new candidate source to public Compiler Explorer for GCC 16.2 and Clang 22.1 was
+Cross-compiler verification was unfinished at the September 9 handoff. A request
+to send the new source to public Compiler Explorer for GCC 16.2 and Clang 22.1 was
 blocked because research authorization did not explicitly authorize disclosure
 of unpublished source to that service. Tor was asked for explicit permission;
-none was received during this session. The machine had only GCC 13.3 (`g++`,
-`g++-13`, and `c++`) locally. Do not claim Clang acceptance yet.
+none was received during that initial session. The machine had only GCC 13.3
+(`g++`, `g++-13`, and `c++`) locally. Clang acceptance was then unverified.
 
-No trick folder, root README entry, or roughly-Turing claim was made. If resumed,
-first obtain permission for public remote compilation or use an available local
-Clang, compile the reduced candidate and controls, then decide whether the result
-clears the artistic bar. Possible names considered informally include **Phase
-shift**, **Shape-shifter**, and **Tuple metamorphosis**; none was selected.
+No trick folder, root README entry, or roughly-Turing claim was made at that
+handoff. The proposed next steps were authorized cross-compiler verification,
+controls, and an assessment of the artistic bar. Possible names considered
+informally included **Phase shift**, **Shape-shifter**, and **Tuple metamorphosis**;
+none was selected in the initial session.
+
+Follow-up status: the exact published reduced source has now passed GCC 16.2
+and Clang 22.1.0 at C++17/O2, and the spell is retained as Phase shift. See
+[note 19](19-phase-shift.md) for the source hash, local controls, bootstrap
+variant, and limits; this does not establish a new isolated machine.
 
 ## Other surveyed seams without retained probes
 

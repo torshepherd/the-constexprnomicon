@@ -15,6 +15,7 @@ A grimoire of forbidden C++, conjured by human and machine.
 | [Chromatic aberration](tricks/chromatic-aberration/) | Empty-base optimization colors a graph; byte offsets are colors. |
 | [Seance](tricks/seance/) | A false concept leaves a runtime ghost in a program with an empty `main`. |
 | [Astral heap](tricks/astral-heap/) | Eight-byte pointers address 32 exbibytes of live constexpr storage. |
+| [Phase shift](tricks/phase-shift/) | One unchanged struct has two binding elements above a declaration and three below it. |
 
 Each folder contains the source and a walkthrough, including compiler requirements
 and commands. Sources stand alone; most use `static_assert` checks, while Seance

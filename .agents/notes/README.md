@@ -16,10 +16,13 @@ Read [AGENTS.md](../../AGENTS.md), [Pedantics](../../docs/Pedantics.md), and the
   identities supply the mechanism; disabling constexpr caching preserves it.
 - Fresh exhaustive search: [out-of-left-field search](18-out-of-left-field-search.md).
   Initializedness/bit-field storage was rejected as the same evaluator-metadata
-  family as Empty bits. A promising but unfinished structured-binding result
-  makes one unchanged type have two binding elements before an incomplete
-  `tuple_size` specialization is completed and three afterward. It has local
-  GCC 13.3 evidence only; no spell or portability claim exists yet.
+  family as Empty bits, but remains preserved, including corrected GCC/Clang
+  evidence. Weaker and unsuccessful directions are recorded too.
+- [Phase shift follow-up](19-phase-shift.md): one unchanged type has two binding
+  elements before its `tuple_size` specialization is completed and three after.
+  The standalone spell passes GCC 13.3, GCC 16.2, and Clang 22.1.0 in C++17;
+  its self-bootstrap variant and retained controls have local GCC evidence.
+  A modest declaration-order curiosity, not a new storage primitive or machine.
 - [Machine investigations](../../docs/MACHINES.md) track demonstrated ingredients
   separately from complete isolated machines. No complete isolated machine is
   currently demonstrated by the examples tracked there. Apply Tor's isolation rules.
@@ -76,6 +79,9 @@ Read [AGENTS.md](../../AGENTS.md), [Pedantics](../../docs/Pedantics.md), and the
     post-Astral search, rejected recursive-arrow, appertainment, RTTI,
     exceptions, initializedness, and implicit-object-creation directions, plus
     the unfinished mid-file structured-binding phase shift.
+19. [Phase shift](19-phase-shift.md): cross-compiler main-source verification,
+    a self-bootstrapping tuple adapter, same-object references, runtime and arity
+    controls, failed const/template caching hypotheses, and bounded future leads.
 
 ## State at the original handoff
 
