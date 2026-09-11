@@ -16,6 +16,7 @@ A grimoire of forbidden C++, conjured by human and machine.
 | [Seance](tricks/seance/) | A false concept leaves a runtime ghost in a program with an empty `main`. |
 | [Astral heap](tricks/astral-heap/) | Eight-byte pointers address 32 exbibytes of live constexpr storage. |
 | [Phase shift](tricks/phase-shift/) | One unchanged struct has two binding elements above a declaration and three below it. |
+| [Fine print](tricks/fine-print/) | Exception specifications run a parser—and a cyclic tag machine—with no function bodies. |
 
 Each folder contains the source and a walkthrough, including compiler requirements
 and commands. Sources stand alone; most use `static_assert` checks, while Seance
@@ -25,7 +26,9 @@ also needs execution. These are experiments, with compiler-specific caveats.
 
 Can one language mechanism supply selection, memory, and recurrence? See the
 [machine investigations](docs/MACHINES.md) and [Pedantics](docs/Pedantics.md).
-No complete isolated machine is currently demonstrated by the examples tracked there.
+[Fine print](tricks/fine-print/cyclic-tag/) demonstrates a complete machine for
+an explicit combination of deduction, overload selection, and exception-specification
+propagation. The single-feature investigations remain separate.
 
 ---
 

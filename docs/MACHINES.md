@@ -27,12 +27,15 @@ this terminology.
 
 ## Current investigations
 
-No complete isolated machine is currently demonstrated by the examples tracked
-on this page. This is a statement about the available evidence, not a claim
-that any listed feature is incapable of supporting one.
+[Fine print](../tricks/fine-print/cyclic-tag/) now demonstrates a complete machine
+for an explicitly combined mechanism: function-template deduction and overload
+selection, pack substitution, and lazy exception-specification propagation.
+The remaining rows are incomplete investigations. No complete isolated
+single-feature machine is claimed by these examples.
 
 | Feature or proposed combination | Evidence in hand | Open boundary |
 | --- | --- | --- |
+| Deduction/overload selection plus exception-specification propagation | [Fine print](../tricks/fine-print/) has a bodyless parentheses parser and a generic cyclic-tag interpreter. Packs retain and rebuild state; overloads select transitions; dependent exception specifications drive recurrence. GCC 13.3/16.2 and Clang 22.1.0 pass C++11 checks, including 940 terminating generated machine cases. | Meets the project's three ingredients for the stated combination. The binary transition scheme simulates Cook's universal cyclic-tag model; the tiny example programs are not themselves universal. No noexcept-only or overload-only claim, arbitrary output-tape decoder, or nontermination oracle. |
 | CTAD-only programming | Tor's [earlier merge-sort example](https://github.com/torshepherd/sorcery-cpp/blob/master/talks/static_assert_false/examples/ctad/1.cpp) expresses computation through deduction guides. | It extracts intermediate results through `.value`. A fully isolated replacement for that extraction has been proposed by Tor but not supplied and checked here. |
 | Hidden copy plus overload resolution | [Copy gate](../tricks/copy-gate/copy-gate.cpp) and the [factorial investigation](../.agents/notes/09-copy-gate.md) demonstrate copying and deduction affecting results. | The factorial uses `if constexpr` and other helpers. It does not establish selection and recurrence within the proposed restricted combination. |
 | Ambiguity-driven constrained overload resolution, observed with `requires` | [False idols](../tricks/false-idols/false-idols.cpp) supplies a finite SAT oracle through subsumption; `requires` observes whether its two eligible overloads have a unique winner. | Feed the result into another transition, carry evolving state, and obtain recurrence within an explicitly agreed set of operations. No such machine has yet been checked. |
@@ -80,6 +83,10 @@ constraints with the same arguments is not a supported mutable store; the
 [standard makes that ill-formed, no diagnostic required](https://eel.is/c++draft/temp.constr.atomic).
 
 ## Research handoff
+
+[Fine print: construction, controls, and scope](../.agents/notes/20-fine-print.md)
+records the new combined machine, its compiler evidence, and why a false answer
+must remain distinct from ill-formed or nonterminating instantiation.
 
 [False idols: proof and controls](../.agents/notes/12-false-idols.md) records the
 verified construction. [Research directions](../.agents/notes/13-research-directions.md)

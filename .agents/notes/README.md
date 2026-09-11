@@ -7,6 +7,13 @@ Read [AGENTS.md](../../AGENTS.md), [Pedantics](../../docs/Pedantics.md), and the
 
 ## Current state
 
+- New [Fine print](20-fine-print.md): function declarations run a parentheses
+  parser through their exception specifications, then a generic cyclic-tag
+  interpreter supplies selection, evolving memory, and recurrence. The explicit
+  combination is deduction/overload selection, pack substitution, and lazy
+  exception-specification propagation. GCC 13.3/16.2 and Clang 22.1.0 pass the
+  C++11 sources and 1,451 generated terminating checks. No function bodies,
+  constexpr functions, or intermediate member-value extraction are involved.
 - Previous research: [Seance and the GCC cache crossover](15-seance.md). A failed
   concept can trigger a dictionary write, but a direct nested requirement can
   trigger it too: an application of existing storage, not a new primitive.
@@ -30,8 +37,9 @@ Read [AGENTS.md](../../AGENTS.md), [Pedantics](../../docs/Pedantics.md), and the
   its self-bootstrap variant and retained controls have local GCC evidence.
   A modest declaration-order curiosity, not a new storage primitive or machine.
 - [Machine investigations](../../docs/MACHINES.md) track demonstrated ingredients
-  separately from complete isolated machines. No complete isolated machine is
-  currently demonstrated by the examples tracked there. Apply Tor's isolation rules.
+  separately from complete machines. Fine print is a demonstrated explicitly
+  combined machine; the single-feature investigations remain incomplete. Apply
+  Tor's isolation rules.
 - [Research directions](13-research-directions.md) and each later note preserve
   untested leads. Choose a bounded investigation rather than treating every lead
   as pending work.
@@ -88,6 +96,9 @@ Read [AGENTS.md](../../AGENTS.md), [Pedantics](../../docs/Pedantics.md), and the
 19. [Phase shift](19-phase-shift.md): cross-compiler main-source verification,
     a self-bootstrapping tuple adapter, same-object references, runtime and arity
     controls, failed const/template caching hypotheses, and bounded future leads.
+20. [Fine print](20-fine-print.md): bodyless computation in exception
+    specifications, a parentheses parser, generic cyclic-tag machine, exact
+    isolation boundary, corrected probes, cross-compiler evidence, and search trail.
 
 ## State at the original handoff
 

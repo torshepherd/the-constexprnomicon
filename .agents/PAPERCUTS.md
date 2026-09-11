@@ -80,6 +80,57 @@
   JSON command result exceeded the output budget and made `JSON.parse` fail on
   the truncation notice. Load each file separately into the orchestration store
   before sending the single tree update; do not interpret truncated JSON.
+- **Fine-print recurrence (September 11):** Startup again printed a broad
+  tool inventory, and grouped full-note reads exceeded the outer orchestration
+  budget despite larger per-command budgets. Recovered the notes through
+  smaller complete-file/range reads. Narrowed subsequent tool discovery to
+  exact GitHub capabilities and kept compiler response summaries small.
+
+## 2026-09-11 — Fine-print research tooling and probe corrections
+
+- **Context:** Exploring computation through dependent exception specifications.
+- **C++11 assertion spelling:** The first check used message-less static_asserts
+  and failed pedantic C++11 compilation. Added messages to the final sources;
+  the mechanism then passed C++11. This was not a language-version barrier.
+- **Incorrect negative input:** The two-tag input `cac` was assumed to halt
+  false but reaches the self-loop `ccc`. The compiler diagnosed specification
+  self-dependence. Corrected the expectation, retained it as an explicitly
+  rejected probe, and added an independent bounded simulator for later checks.
+- **Missing parser dependency:** A primary-standard text extraction script
+  imported `bs4`, which is absent locally. Replaced it with the standard
+  library's `html.parser`; no package installation was necessary. Exact phrase
+  searches in the old draft's extracted text still did not match; the current
+  draft's directly read sections supplied the standards explanation.
+- **Source retrieval:** The web reader failed on Tor's supplied CTAD GitHub
+  blob link; the GitHub file tool returned the source. A guessed historical
+  Cook PDF path returned 404, and a DOI click did not resolve in the web reader.
+  Search found the publisher's relocated primary PDF, which opened successfully.
+- **Local compiler:** This fresh workspace again has GCC 13.3 and no Clang.
+  Authorized direct Compiler Explorer requests worked for GCC 16.2 and Clang
+  22.1.0; there was no disclosure-review block this session.
+- **Status:** All worked around or corrected; no compiler installation,
+  background investigation, or unresolved upload approval remains.
+
+## 2026-09-11 — Fine-print public Godbolt link rejected despite standing authorization
+
+- **Context:** All direct compilation requests had succeeded. Creating a
+  permanent editable link for the parser and cyclic-tag source used the API's
+  documented shortener, under the public-source permission in `AGENTS.md`.
+- **Symptom:** Polling the command returned an automatic-approval rejection:
+  “This permanently publishes locally assembled repository source to Compiler
+  Explorer’s public shortener, an external disclosure not explicitly authorized
+  by the user; compiler validation could be performed without creating a
+  durable public copy.” No completed link was available from that attempt.
+- **Cost:** Interrupted the final handoff, required recording the refusal and
+  considering publication permission again despite the existing explicit policy.
+- **User clarification (verbatim):** “I give permission to use godbolt. And to push. Make sure to write down everything you try as well in the working notes. Can’t be rehashing the same things in the future”
+- **Next action:** Retry the same direct shortener request after this explicit
+  clarification, and finish the direct-to-main publication. Do not use an
+  indirect disclosure route. Record the actual result below.
+- **Resolved:** The direct authorized retry succeeded and returned
+  [e78xTGzWP](https://godbolt.org/z/e78xTGzWP), containing separate parser and
+  cyclic-machine editors with GCC 16.2 and Clang 22.1.0. No further permission
+  was requested. The initial blocked attempt had not created a result file.
 
 Small things that cost collaborators time: refusals, confusing tool behavior,
 missing capabilities, failed approaches, extra steps, and workarounds. Tor
