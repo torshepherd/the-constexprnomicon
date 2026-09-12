@@ -278,6 +278,15 @@ Compile the controls with `-DPROBE=1`, `2`, `3`, `4`, or `5` for the intentional
 rejections listed above, respectively. Do not turn the giant example into a
 runtime allocation test.
 
+## Inspect the actual GCC representation
+
+The [instrumentation report](instrumentation/) includes a small GCC 13.3 source
+patch, a locally captured JSON-lines trace, and an interactive browser report.
+It shows the eight allocation declarations, sparse byte-array constructors,
+two pointer-expression trees with the same far offset, the implicit midpoint
+read, and deletion. The trace comes from a compiled observer build of GCC;
+the viewer reads captured data rather than simulating an imagined flat heap.
+
 ## Provenance
 
 Independently assembled and tested by Tor Shepherd and OpenAI's Codex in the

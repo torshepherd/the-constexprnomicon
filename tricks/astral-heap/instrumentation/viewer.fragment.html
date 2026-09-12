@@ -1,0 +1,100 @@
+<div id="astral-gcc-observer">
+  <style>
+    #astral-gcc-observer { color:var(--foreground); font-family:inherit; }
+    #astral-gcc-observer .astral-status { margin:12px 0; }
+    #astral-gcc-observer .astral-pointer { display:grid; grid-template-columns:auto minmax(0,1fr); gap:8px; margin:8px 0; }
+    #astral-gcc-observer .astral-pointer code { overflow-wrap:anywhere; }
+    #astral-gcc-observer .astral-entry { display:block; overflow-wrap:anywhere; }
+    #astral-gcc-observer .astral-highlight { background:color-mix(in srgb,var(--viz-series-1) 12%,transparent); }
+    #astral-gcc-observer strong { font-weight:500; }
+    #astral-gcc-observer pre { white-space:pre-wrap; overflow-wrap:anywhere; }
+    #astral-gcc-observer .astral-node { overflow-wrap:anywhere; }
+  </style>
+  <h3>GCC’s live constexpr heap</h3>
+  <div class="viz-row">
+    <button class="btn" type="button" data-prev aria-label="Previous captured event">Previous</button>
+    <button class="btn" type="button" data-next aria-label="Next captured event">Next</button>
+    <span data-position class="tabular-nums"></span>
+  </div>
+  <label class="form-label">Captured event
+    <input data-step class="form-range" type="range" min="0" value="0" aria-label="Captured GCC event">
+  </label>
+  <div data-event class="astral-status" aria-live="polite"></div>
+  <div data-total class="tabular-nums"></div>
+  <div data-pointers aria-label="Captured pointer expressions"></div>
+  <div data-read class="astral-status"></div>
+  <table class="table table-sm">
+    <thead><tr><th scope="col">Allocation declaration</th><th scope="col">Explicit byte-array entries</th></tr></thead>
+    <tbody data-heap></tbody>
+  </table>
+  <details>
+    <summary>Observed pointer trees and host node identities</summary>
+    <pre data-raw></pre>
+  </details>
+  <div class="text-small text-muted">GCC 13.3.0 · actual captured events · target pointer: 8 bytes · host tree IDs are diagnostic identities</div>
+  <script type="application/json" data-trace>__TRACE_DATA__</script>
+  <script>
+  (() => {
+    const root = document.getElementById('astral-gcc-observer');
+    const trace = JSON.parse(root.querySelector('[data-trace]').textContent);
+    const steps = trace.events;
+    const slider = root.querySelector('[data-step]');
+    slider.max = String(steps.length - 1);
+    let index = trace.initial;
+    const number = value => BigInt(value).toLocaleString('en-US');
+    const add = (parent, tag, text, cls) => {
+      const node = document.createElement(tag);
+      node.textContent = text;
+      if (cls) node.className = cls;
+      parent.append(node);
+      return node;
+    };
+    function draw() {
+      const event = steps[index];
+      slider.value = String(index);
+      root.querySelector('[data-position]').textContent = `${index + 1} / ${steps.length}`;
+      root.querySelector('[data-prev]').disabled = index === 0;
+      root.querySelector('[data-next]').disabled = index === steps.length - 1;
+      root.querySelector('[data-event]').textContent = `${event.event} · source line ${event.line} · evaluation ${event.evaluation}`;
+      const live = event.heap.filter(h => h.alive);
+      const total = live.reduce((n,h) => n + BigInt(h.bytes), 0n);
+      const entries = live.reduce((n,h) => n + (h.array ? h.array.count : 0), 0);
+      root.querySelector('[data-total]').textContent = `${live.length} live allocations · ${number(total)} logical bytes · ${entries} explicit byte entries`;
+      const pointers = root.querySelector('[data-pointers]');
+      pointers.replaceChildren();
+      for (const [name,p] of Object.entries(event.pointers)) {
+        const row = add(pointers,'div','', 'astral-pointer');
+        add(row,'strong',name);
+        const alive = event.heap.some(h => h.id === p.allocation && h.alive);
+        add(row,'code',`allocation #${p.allocation} + ${p.offset} bytes${alive ? '' : ' · allocation deleted'}`);
+      }
+      const read = root.querySelector('[data-read]');
+      read.textContent = event.read ? `Read index ${event.read.index}: ${event.read.explicit ? 'explicit entry found' : 'no explicit entry; implicit initialization path'}` : '';
+      const body = root.querySelector('[data-heap]');
+      body.replaceChildren();
+      for (const h of event.heap) {
+        const row = document.createElement('tr');
+        if (event.read && h.array && h.array.node === event.read.node) row.className = 'astral-highlight';
+        const first = document.createElement('td');
+        add(first,'strong',`#${h.id}${h.alive ? '' : ' · deleted'}`);
+        add(first,'div',`${number(h.bytes)} bytes`, 'text-small tabular-nums astral-node');
+        if (h.array) add(first,'div',`CONSTRUCTOR ${h.array.node}`, 'text-small astral-node');
+        const second = document.createElement('td');
+        if (!h.alive) add(second,'span','Value removed');
+        else if (!h.array) add(second,'span',h.initialized ? 'Byte-array constructor not materialized' : 'Allocation awaiting initialization');
+        else {
+          for (const entry of h.array.entries) add(second,'code',`[${entry.index}] → ${entry.value}`, 'astral-entry');
+          add(second,'div',h.array.no_clearing ? 'Missing entries: uninitialized' : 'Missing byte entries: value-initialized (0)', 'text-small');
+        }
+        row.append(first,second);
+        body.append(row);
+      }
+      root.querySelector('[data-raw]').textContent = JSON.stringify(event.pointers,null,2);
+    }
+    slider.addEventListener('input',()=> { index = Number(slider.value); draw(); });
+    root.querySelector('[data-prev]').addEventListener('click',()=> { index = Math.max(0,index-1); draw(); });
+    root.querySelector('[data-next]').addEventListener('click',()=> { index = Math.min(steps.length-1,index+1); draw(); });
+    draw();
+  })();
+  </script>
+</div>

@@ -525,3 +525,57 @@ same discovery. Keep credentials and other sensitive data out of the log.
   compiler/Python command against the resulting tree.
 - **Status:** Fixed during cleanup. Historical scratch filenames and `/tmp` output
   paths are deliberately preserved; repository input paths are updated.
+
+## 2026-09-12 — Building an observable GCC in the Work container
+
+- **Compiler path:** Assumed `/usr/lib/gcc/.../cc1plus`, which did not exist.
+  `g++ -print-prog-name=cc1plus` located `/usr/libexec/gcc/.../cc1plus`.
+  Plugin headers and GMP/MPFR/MPC development headers were also absent.
+- **Package installation:** `apt-get update` failed because its `_apt` identity
+  switch attempted unavailable uid/gid mappings (`setgroups`, `setegid`, and
+  `seteuid` errors). No packages were installed. Used GCC's source prerequisite
+  downloads instead; no sandbox permissions were changed.
+- **Archive ownership:** As uid zero in a user namespace, plain `tar -xf` tried
+  to restore unmapped archive owner IDs. It wrote the source files but produced
+  huge ownership-error output and exited unsuccessfully. Re-extracted with
+  `--no-same-owner` and redirected logs. GCC's prerequisite helper hit the same
+  issue internally; supplying `TAR_OPTIONS=--no-same-owner` resolved it.
+- **Integrity check:** The first MPC archive failed the release helper's SHA512
+  check. Did not skip verification. Downloading that archive again over explicit
+  HTTPS made all three prerequisite checks pass. The cause of the first mismatch
+  was not established. An early configure attempt, before successful dependency
+  setup, correctly failed for missing prerequisites; the subsequent one passed.
+- **Existing dumps:** The forced consteval example produced a language raw-tree
+  dump and an empty `-fdump-tree-original` file, not a live constexpr heap history.
+  Added a narrowly scoped GCC source observer rather than interpreting those
+  dumps as runtime memory or an evaluator trace.
+- **Source retrieval:** Opening the pinned GCC file with web returned an internal
+  retrieval error; direct HTTPS retrieval of the official mirror's raw file
+  succeeded and matched the release archive's `gcc/cp/constexpr.cc` exactly.
+- **Direct compiler output:** Calling `cc1plus` directly with `-fsyntax-only`
+  unexpectedly left empty `.s` files next to the four input sources. Added
+  `-o /dev/null` to the reproduction command. An attempted `rm -f` cleanup was
+  automatically rejected with “rm -f style commands are not permitted. Use a
+  safer approach.” A targeted Python cleanup first asserted that each known
+  generated file was empty, then unlinked it successfully.
+- **Browser availability/download:** Playwright was installed but its Chromium
+  executable was absent. No browser connector or other browser binary was
+  available. The Playwright installer and a direct CDN download timed out.
+  The official Google Storage mirror returned a partial 31,498,240-byte file;
+  extraction failed with `BadZipFile`, and the subsequent launch consequently
+  had no executable. Inspected the response headers (expected 120,231,126 bytes),
+  resumed the download with curl, and checked the completed archive against the
+  server's MD5 and ZIP member CRCs before extraction. The resulting headless
+  browser ran successfully. This required extra retries and local setup; no
+  source was uploaded to a browser service.
+- **Mobile report layout:** The first 390px screenshot showed a long byte-count
+  label extending into the neighboring table cell even though the page itself
+  had no horizontal overflow. Applied wrapping to the label, then checked cell
+  bounds as well as page bounds at 320, 390, and 850px. Interaction checks and
+  the final mobile screenshot passed; page overflow alone would have missed it.
+- **Checking a committed patch file:** `git diff --cached --check` flagged the
+  unified diff's literal context prefixes as trailing whitespace and spaces
+  before tabs. Those prefixes are required patch syntax, not added whitespace
+  in GCC source. Retained the exact compiled patch and its hash; checked the
+  other staged files separately instead of damaging the patch to silence the
+  generic whitespace checker.

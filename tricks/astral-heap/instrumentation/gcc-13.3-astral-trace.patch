@@ -1,0 +1,196 @@
+--- a/gcc/cp/constexpr.cc
++++ b/gcc/cp/constexpr.cc
+@@ -1146,6 +1146,8 @@
+    cxx_eval_outermost_constant_expr invocation.  VALUES is a map of values of
+    variables initialized within the expression.  */
+ 
++static unsigned astral_evaluation_serial;
++
+ class constexpr_global_ctx {
+   /* Values for any temporaries or local variables within the
+      constant-expression. */
+@@ -1165,10 +1167,12 @@
+   hash_set<tree> *modifiable;
+   /* Number of heap VAR_DECL deallocations.  */
+   unsigned heap_dealloc_count;
++  unsigned astral_evaluation;
++  void astral_trace (const char *, tree, tree, location_t);
+   /* Constructor.  */
+   constexpr_global_ctx ()
+     : constexpr_ops_count (0), cleanups (NULL), modifiable (nullptr),
+-      heap_dealloc_count (0) {}
++      heap_dealloc_count (0), astral_evaluation (++astral_evaluation_serial) {}
+ 
+  tree get_value (tree t)
+   {
+@@ -1187,9 +1191,120 @@
+     bool already_in_map = values.put (t, v);
+     if (!already_in_map && modifiable)
+       modifiable->add (t);
++    if (v && DECL_P (t) && DECL_NAME (t))
++      astral_trace ("bind", t, v, DECL_SOURCE_LOCATION (t));
+   }
+   void remove_value (tree t) { values.remove (t); }
+ };
++
++// GCC_ASTRAL_TRACE enables an observational JSON-lines heap trace on stderr.
++static bool
++astral_enabled ()
++{
++  static bool enabled = getenv ("GCC_ASTRAL_TRACE") != nullptr;
++  return enabled;
++}
++
++static void
++astral_string (const char *s)
++{
++  fputc ('"', stderr);
++  if (s)
++    for (const unsigned char *p = (const unsigned char *)s; *p; ++p)
++      if (*p == '"' || *p == '\\')
++        { fputc ('\\', stderr); fputc (*p, stderr); }
++      else if (*p < 32)
++        fprintf (stderr, "\\u%04x", (unsigned)*p);
++      else
++        fputc (*p, stderr);
++  fputc ('"', stderr);
++}
++
++static void
++astral_tree (tree t, unsigned depth = 0)
++{
++  if (!t) { fputs ("null", stderr); return; }
++  fprintf (stderr, "{\"node\":\"%p\",\"kind\":", (void *)t);
++  astral_string (get_tree_code_name (TREE_CODE (t)));
++  if (depth > 12) { fputs (",\"truncated\":true}", stderr); return; }
++  if (TREE_CODE (t) == INTEGER_CST)
++    {
++      if (tree_fits_shwi_p (t))
++        fprintf (stderr, ",\"decimal\":\"" HOST_WIDE_INT_PRINT_DEC "\"", tree_to_shwi (t));
++      else if (tree_fits_uhwi_p (t))
++        fprintf (stderr, ",\"decimal\":\"" HOST_WIDE_INT_PRINT_UNSIGNED "\"", tree_to_uhwi (t));
++      else fputs (",\"decimal\":null", stderr);
++    }
++  else if (DECL_P (t))
++    {
++      fprintf (stderr, ",\"decl_uid\":%u,\"name\":", DECL_UID (t));
++      astral_string (DECL_NAME (t) ? IDENTIFIER_POINTER (DECL_NAME (t)) : "");
++    }
++  else if (TREE_CODE (t) == CONSTRUCTOR)
++    {
++      fprintf (stderr, ",\"no_clearing\":%s,\"type_kind\":",
++               CONSTRUCTOR_NO_CLEARING (t) ? "true" : "false");
++      astral_string (get_tree_code_name (TREE_CODE (TREE_TYPE (t))));
++      tree size = TYPE_SIZE_UNIT (TREE_TYPE (t));
++      if (size && tree_fits_uhwi_p (size))
++        fprintf (stderr, ",\"logical_bytes\":\"" HOST_WIDE_INT_PRINT_UNSIGNED "\"", tree_to_uhwi (size));
++      unsigned n = CONSTRUCTOR_NELTS (t);
++      fprintf (stderr, ",\"entry_count\":%u,\"entries\":[", n);
++      for (unsigned i = 0; i < n && i < 64; ++i)
++        {
++          if (i) fputc (',', stderr);
++          fputs ("{\"index\":", stderr);
++          astral_tree ((*CONSTRUCTOR_ELTS (t))[i].index, depth + 1);
++          fputs (",\"value\":", stderr);
++          astral_tree ((*CONSTRUCTOR_ELTS (t))[i].value, depth + 1);
++          fputc ('}', stderr);
++        }
++      fputc (']', stderr);
++      if (n > 64) fputs (",\"truncated\":true", stderr);
++    }
++  else if (EXPR_P (t))
++    {
++      fputs (",\"operands\":[", stderr);
++      int n = TREE_OPERAND_LENGTH (t);
++      for (int i = 0; i < n && i < 4; ++i)
++        {
++          if (i) fputc (',', stderr);
++          astral_tree (TREE_OPERAND (t, i), depth + 1);
++        }
++      fputc (']', stderr);
++      if (n > 4) fputs (",\"truncated\":true", stderr);
++    }
++  fputc ('}', stderr);
++}
++
++void
++constexpr_global_ctx::astral_trace (const char *event, tree subject, tree value,
++                                   location_t loc)
++{
++  if (!astral_enabled () || heap_vars.is_empty ()) return;
++  fprintf (stderr, "ASTRAL {\"evaluation\":%u,\"event\":", astral_evaluation);
++  astral_string (event);
++  fprintf (stderr, ",\"line\":%d,\"ops\":" HOST_WIDE_INT_PRINT_DEC,
++           expand_location (loc).line, constexpr_ops_count);
++  fputs (",\"subject\":", stderr); astral_tree (subject);
++  fputs (",\"value\":", stderr); astral_tree (value);
++  fputs (",\"heap\":[", stderr);
++  for (unsigned i = 0; i < heap_vars.length (); ++i)
++    {
++      if (i) fputc (',', stderr);
++      tree var = heap_vars[i];
++      fprintf (stderr, "{\"id\":%u,\"decl\":", DECL_UID (var));
++      astral_tree (var);
++      tree size = TYPE_SIZE_UNIT (TREE_TYPE (var));
++      if (size && tree_fits_uhwi_p (size))
++        fprintf (stderr, ",\"logical_bytes\":\"" HOST_WIDE_INT_PRINT_UNSIGNED "\"", tree_to_uhwi (size));
++      bool dead = DECL_NAME (var) == heap_deleted_identifier;
++      fprintf (stderr, ",\"alive\":%s,\"value\":", dead ? "false" : "true");
++      astral_tree (get_value (var));
++      fputc ('}', stderr);
++    }
++  fputs ("]}\n", stderr);
++}
+ 
+ /* Helper class for constexpr_global_ctx.  In some cases we want to avoid
+    side-effects from evaluation of a particular subexpression of a
+@@ -2763,6 +2878,7 @@
+ 	      varpool_node::finalize_decl (var);
+ 	      ctx->global->heap_vars.safe_push (var);
+ 	      ctx->global->put_value (var, NULL_TREE);
++      ctx->global->astral_trace ("allocate", var, arg0, loc);
+ 	      return fold_convert (ptr_type_node, build_address (var));
+ 	    }
+ 	  else
+@@ -2789,9 +2905,11 @@
+ 			  *non_constant_p = true;
+ 			  return t;
+ 			}
++		      ctx->global->astral_trace ("before-delete", var, ctx->global->get_value (var), loc);
+ 		      DECL_NAME (var) = heap_deleted_identifier;
+ 		      ctx->global->remove_value (var);
+ 		      ctx->global->heap_dealloc_count++;
++		      ctx->global->astral_trace ("delete", var, NULL_TREE, loc);
+ 		      return void_node;
+ 		    }
+ 		  else if (DECL_NAME (var) == heap_vec_uninit_identifier
+@@ -2811,9 +2929,11 @@
+ 			  *non_constant_p = true;
+ 			  return t;
+ 			}
++		      ctx->global->astral_trace ("before-delete", var, ctx->global->get_value (var), loc);
+ 		      DECL_NAME (var) = heap_deleted_identifier;
+ 		      ctx->global->remove_value (var);
+ 		      ctx->global->heap_dealloc_count++;
++		      ctx->global->astral_trace ("delete", var, NULL_TREE, loc);
+ 		      return void_node;
+ 		    }
+ 		  else if (DECL_NAME (var) == heap_deleted_identifier)
+@@ -4253,6 +4373,8 @@
+       i = tree_to_shwi (index);
+       found = (i < len);
+     }
++
++  ctx->global->astral_trace (found ? "array-read-explicit" : "array-read-implicit", ary, index, EXPR_LOCATION (t));
+ 
+   if (found)
+     {
+@@ -6376,6 +6498,8 @@
+ 	if (TREE_CODE (TREE_TYPE (*elt)) == UNION_TYPE)
+ 	  CONSTRUCTOR_NO_CLEARING (*elt) = false;
+       }
++
++  ctx->global->astral_trace ("store", object, ctx->global->get_value (object), EXPR_LOCATION (t));
+ 
+   if (lval)
+     return target;

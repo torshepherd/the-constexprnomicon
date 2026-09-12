@@ -1,0 +1,34 @@
+[
+  {
+    "file": "tricks/astral-heap/astral-heap.cpp",
+    "trace_enabled": false,
+    "code": 0,
+    "stderr": ""
+  },
+  {
+    "file": "tricks/astral-heap/experiments/controls.cpp",
+    "trace_enabled": false,
+    "code": 0,
+    "stderr": ""
+  },
+  {
+    "file": "tricks/astral-heap/experiments/tagged-pointer-payload.cpp",
+    "trace_enabled": false,
+    "code": 0,
+    "stderr": ""
+  },
+  {
+    "file": "tricks/astral-heap/instrumentation/trace-example.cpp",
+    "trace_enabled": false,
+    "code": 0,
+    "stderr": ""
+  },
+  {
+    "file": "trace-example.cpp",
+    "trace_enabled": true,
+    "code": 0,
+    "seconds": 0.0967,
+    "events": 145,
+    "non_trace_diagnostics": []
+  }
+]

@@ -1,0 +1,16 @@
+{
+  "gcc_version": "13.3.0",
+  "target": "x86_64-pc-linux-gnu",
+  "flags": [
+    "-quiet",
+    "-std=c++20",
+    "-O0",
+    "-fconstexpr-cache-depth=0",
+    "-fsyntax-only"
+  ],
+  "exit_code": 0,
+  "raw_trace_sha256": "58f38780be3fd8dba5540b498d42d83a64242e997b8430045a5476af8d435691",
+  "source_sha256": "2c1df192b1b52e99bf42d67b27707fa632e3209c2d55460389f161d31efbea16",
+  "patch_sha256": "93f58740f8414a06e9cf6b4573479f5e5de5be2f232ae393975f20cf9927597c",
+  "gcc_archive_sha256": "0845e9621c9543a13f484e94584a49ffc0129970e9914624235fc1d061a0c083"
+}

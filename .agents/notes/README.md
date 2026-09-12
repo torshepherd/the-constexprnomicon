@@ -27,6 +27,10 @@ Read [AGENTS.md](../../AGENTS.md), [Pedantics](../../docs/Pedantics.md), and the
   Follow-up removes the builtin with a fixed tagged codebook: read the bank tag,
   cast to its slot type, and subtract within the array. GCC 13.3 and 16.2 pass;
   the authorized Godbolt retry also verifies the original pointer encoding.
+  [GCC instrumentation](21-astral-instrumentation.md) now captures the actual
+  evaluator trees with a locally built GCC 13.3 observer and provides a replay
+  report: eight allocation IDs, two explicit byte entries per array, symbolic
+  far pointers, an implicit read, and deletion.
 - Fresh exhaustive search: [out-of-left-field search](18-out-of-left-field-search.md).
   Initializedness/bit-field storage was rejected as the same evaluator-metadata
   family as Empty bits, but remains preserved, including corrected GCC/Clang

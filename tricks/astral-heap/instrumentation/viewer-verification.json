@@ -1,0 +1,26 @@
+{
+  "browser": "151.0.7922.34",
+  "initial": "8 live allocations · 36,893,488,147,419,103,232 logical bytes · 16 explicit byte entries",
+  "first": "1 live allocations · 4,611,686,018,427,387,904 logical bytes · 0 explicit byte entries",
+  "last": "0 live allocations · 0 logical bytes · 0 explicit byte entries",
+  "previous": "1 live allocations · 4,611,686,018,427,387,904 logical bytes · 2 explicit byte entries",
+  "next": "0 live allocations · 0 logical bytes · 0 explicit byte entries",
+  "widths": [
+    {
+      "width": 320,
+      "overflow": false,
+      "labelsFit": true
+    },
+    {
+      "width": 390,
+      "overflow": false,
+      "labelsFit": true
+    },
+    {
+      "width": 850,
+      "overflow": false,
+      "labelsFit": true
+    }
+  ],
+  "errors": []
+}
