@@ -23,6 +23,11 @@
 - **Publication follow-up (verbatim):** “Hi, were you able to finish up and push what you were up to?”
   This explicitly confirms the requested publication step for the completed
   documentation refinement and its pending investigation commits.
+- **Resolved September 13:** The connected GitHub app published the final
+  verified tree as `2ff812e`, with the previous remote `main` (`124603e`) as its
+  parent and `force: false`. Fetch confirmed exact tree equality and preserved
+  ancestry. The local intermediate commits were retained on
+  `local/constantness-work`; local `main` tracks the published history.
 
 ## 2026-09-12 — Constantness audit setup and library selection
 
@@ -232,6 +237,9 @@ same discovery. Keep credentials and other sensitive data out of the log.
   automatic-review rejection. The connected GitHub app can read the current
   parent. Publish the consolidated final tree through its Git data API with a
   non-forced branch update, then compare the fetched tree with the local tree.
+- **September 13 result:** App publication and the fetched-tree comparison
+  succeeded (`2ff812e`). Shell credentials remain unavailable; the connected
+  app is the working publication route. Remote history was only extended.
   The app-created commit has a different SHA because its commit metadata differs,
   even though its file tree is identical.
 
