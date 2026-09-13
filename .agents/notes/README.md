@@ -7,6 +7,10 @@ Read [AGENTS.md](../../AGENTS.md), [Pedantics](../../docs/Pedantics.md), and the
 
 ## Current state
 
+- [Browser constexpr debugger research](23-browser-constexpr-debugger.md):
+  WasmBolt, GCC/Clang browser ports, CLion stepping, and a proposed event model
+  for heap, cache, lifetime, and constantness-probe inspection. Research only;
+  the modern GCC Wasm cross-build remains unverified.
 - [Constantness alternatives](22-constantness-alternatives.md): C++26 lifetime
   queries replace the empty integer's probe on Clang and support an owning
   one-pointer vector with a distinct final union marker. A C++23 template/type
@@ -114,6 +118,8 @@ Read [AGENTS.md](../../AGENTS.md), [Pedantics](../../docs/Pedantics.md), and the
 22. [Constantness alternatives](22-constantness-alternatives.md): direct
     substitution failures, C++26 lifetime queries, sentinel vector, template
     pointer span, builtin-free GCC counter, and compiler/library boundaries.
+23. [Browser constexpr debugger](23-browser-constexpr-debugger.md): prior art,
+    Wasm host versus target model, replay, cache observation, and engine limits.
 
 ## State at the original handoff
 

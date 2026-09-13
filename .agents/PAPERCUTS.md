@@ -1,5 +1,26 @@
 # Papercuts
 
+## 2026-09-13 — Browser-compiler prior-art retrieval
+
+- **Search specificity:** Several broad GCC/Wasm searches returned tutorials
+  about compiling programs to Wasm, and some results pointed to site roots
+  rather than the named article/package. Exact project names and primary
+  README/source retrieval were needed to distinguish compiler host from target.
+- **Web retrieval errors:** WasmBolt/AVR GCC GitHub pages returned DisabledError,
+  jsDelivr raw files and an LLVM Discourse page returned internal errors, and
+  the JetBrains announcement returned 403. Direct raw/CDN requests and GitHub/
+  Discourse JSON endpoints recovered the relevant primary sources. JetBrains'
+  current help page supplied the debugger features and limitations.
+- **Output volume:** Combining long web results with an unprocessed Discourse
+  JSON response caused truncation. Saved the source responses in research
+  scratch, extracted the post text, and read the smaller files separately.
+- **Stale build-document paths:** romdev's published package README referred to
+  root `BUILDING.md` and `scripts/versions.json`; both returned 404. The current
+  tree placed scripts under `packages/romdevtools/scripts`. The located GCC
+  script builds a native C toolchain, so it was recorded as a partial lead,
+  not promoted to evidence of a complete modern C++ Wasm build recipe.
+
+
 ## 2026-09-12 — Constantness audit push rejected despite repository workflow
 
 - **Context:** Completed the builtin-alternative investigation, preserved tested
