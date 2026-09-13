@@ -73,9 +73,18 @@ cache is used.
 
 ## Follow-up: a 65-bit value in one eight-byte pointer
 
-Yes, the extra symbolic address information can carry a recoverable payload.
-[pointer-payload.cpp](experiments/pointer-payload.cpp) uses the eight arrays as
-a shared, immutable codebook. An encoded value is just an `unsigned char*`:
+The extra symbolic address information can carry a recoverable payload. Both
+versions use eight arrays as a shared, immutable codebook:
+
+| Version | Encoded pointer | Recover the bank |
+| --- | --- | --- |
+| [Builtin probe](experiments/pointer-payload.cpp) | `unsigned char*` into all-zero arrays | Test whether subtraction from each bank's base is constant. |
+| [Ordinary labels](experiments/tagged-pointer-payload.cpp) | `cell const*` into arrays with fixed bank labels | Read the label, then cast to the corresponding slot type. |
+
+Both recover 65 bits from one eight-byte pointer on the checked GCC. The tagged
+version needs no builtin and changes the fixed codebook, not the pointer's size.
+The original heap demonstration above also needs no builtin. In the first
+pointer encoding, an encoded value is just an `unsigned char*`:
 
 ```cpp
 // bank has 3 bits; offset has 62 bits.
@@ -107,6 +116,11 @@ it could not establish a constant, not that it proved an expression invalid.
 [Builtin documentation](https://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html).
 The particular bank-discrimination behavior is compiler evidence, not a general
 pointer-validity API or an ISO guarantee.
+
+`if consteval` or `std::is_constant_evaluated()` cannot select the matching
+bank: the evaluation context is identical for every candidate. They do not
+turn cross-array subtraction into a failed Boolean probe. The tagged version
+below obtains the bank information from an ordinary member read instead.
 
 The source accepts an ordinary `{bool high, unsigned long long low}` input and
 recovers both fields from the pointer. The extra bit is not a template argument

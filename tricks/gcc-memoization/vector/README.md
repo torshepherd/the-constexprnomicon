@@ -48,6 +48,14 @@ The complete standalone file passes GCC 13.3.0 and GCC 16.2 at C++23 `-O0` and
 [session notes](../../../.agents/notes/06-cache-memory.md#the-singleton-vector) for its
 source hash and verification details.
 
+The underlying dictionary still uses `__builtin_constant_p` for revision and
+bit probes. The [template counter workaround](../counter/README.md#probe-with-requires-and-if-constexpr)
+requires template arguments and fresh specializations; it is not a replacement
+for the ordinary indices and writes behind `v[i]` and `push_back`. No complete
+version of this vector without the builtin has been verified. The
+[memory explanation](../memory/README.md#can-this-version-drop-the-builtin)
+describes that boundary.
+
 ## Try it
 
 Recorded compiler evidence: **GCC 13.3 and 16.2, default constexpr depth/cache settings**, C++23.

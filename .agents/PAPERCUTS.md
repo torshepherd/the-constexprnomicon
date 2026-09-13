@@ -1,5 +1,57 @@
 # Papercuts
 
+## 2026-09-12 — Constantness audit push rejected despite repository workflow
+
+- **Context:** Completed the builtin-alternative investigation, preserved tested
+  variants and notes, verified links and whitespace, and checked that local
+  HEAD matched remote main before publication. `AGENTS.md` instructs completed
+  work to be committed and pushed directly to main. Tor explicitly authorized
+  Godbolt uploads in this turn; those uploads and the public shortener succeeded.
+- **Attempt/symptom:** A local commit succeeded as `6ffe4fa`, then automatic
+  approval review blocked the push. Its stated reason: “The command commits
+  576 lines of changes and pushes them to the repository’s default `main`
+  branch, a consequential shared/public mutation not authorized by the user’s
+  request.”
+- **Cost/status:** The investigation and public Godbolt examples are complete,
+  but repository publication is blocked. Preserve the local commits, report the
+  exact distinction to Tor, and request explicit push approval. No force-push,
+  alternate publishing API, or indirect retry was attempted.
+- **New user instruction:** Tor subsequently explicitly requested edits to the
+  existing trick READMEs and examples, with both builtin and workaround
+  versions integrated. Completed that requested refactor before revisiting
+  the repository's standing direct-to-main publication workflow.
+- **Publication follow-up (verbatim):** “Hi, were you able to finish up and push what you were up to?”
+  This explicitly confirms the requested publication step for the completed
+  documentation refinement and its pending investigation commits.
+
+## 2026-09-12 — Constantness audit setup and library selection
+
+- **Path assumptions:** An initial search used the old `.agent` spelling;
+  this checkout uses `.agents`. A guessed `pointer-payload-tagged.cpp` name
+  also failed; `rg --files` located `tagged-pointer-payload.cpp`. Each failed
+  command stopped dependent reads, which were rerun with the discovered paths.
+- **Output volume recurrence:** Broad search/GitHub tool metadata and complete
+  grouped notes again produced truncated output. Narrow metadata to the exact
+  tool and split relevant source reads. The API fetch duplicated its document
+  in structured fields; inspect one content field rather than the entire result.
+- **Documentation follow-up:** Two independently bounded README reads still
+  exceeded the combined orchestration output budget. Subsequent reads focused
+  on the sections being changed. A multi-file patch then failed verification
+  because its papercut context omitted one word; no files were changed by that
+  attempt. Reread the exact lines and reapplied it before running verification.
+- **Library exposure:** GCC 16.2 and Clang 22.1.0's default library setup lacked
+  `std::is_within_lifetime`, even in C++26 mode. These are missing-facility
+  failures, not verdicts on the algorithms. The underlying builtin was present
+  in Clang. Selecting `-stdlib=libc++` enabled the real library API on Clang;
+  GCC trunk also exposed it. Extra bounded availability checks separated those
+  cases. No hand-written declaration in `std` was used as a workaround.
+- **Documentation search:** Some niche web searches returned site homepages or
+  unrelated results. Exact draft/paper URLs and LLVM's raw test file supplied
+  the rules. Clang's LanguageExtensions page had no match for the new builtin;
+  its compiler tests and actual compilation supplied the boundary evidence.
+- **Status:** Resolved. Direct authorized Godbolt compilation uploads succeeded;
+  the compiler failures and corrected assumptions are preserved in note 22.
+
 ## 2026-09-11 — Godbolt follow-up upload blocked by automatic review
 
 - **Context:** Checking the Astral heap pointer-payload construction on GCC 16.2
@@ -173,6 +225,13 @@ same discovery. Keep credentials and other sensitive data out of the log.
   `git reset --soft origin/main`. Matching trees and a clean working tree were
   checked first; this was not a reset of unrelated work.
 - **Status:** The app completed the push. Shell push credentials were not fixed.
+- **September 12 recurrence:** After Tor explicitly asked to finish and push
+  the constantness documentation refinement, local commit `5aad5ae` succeeded
+  but HTTPS push failed with `could not read Username for 'https://github.com':
+  No such device or address`. This was missing shell authentication, not another
+  automatic-review rejection. The connected GitHub app can read the current
+  parent. Publish the consolidated final tree through its Git data API with a
+  non-forced branch update, then compare the fetched tree with the local tree.
   The app-created commit has a different SHA because its commit metadata differs,
   even though its file tree is identical.
 

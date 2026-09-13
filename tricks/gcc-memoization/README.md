@@ -2,7 +2,18 @@
 
 **The compiler's cache is the storage.** Warm a recursive call until a later probe
 can finish within GCC's evaluation limit; whether it succeeds becomes a readable
-bit. The constructions below turn that one trick into increasingly capable stores.
+bit. The counter demonstrates two ways to observe it:
+
+| Probe | Complete example | What changes |
+| --- | --- | --- |
+| `__builtin_constant_p(slow(n))` | [Builtin counter](counter/counter.cpp) | Scan ordinary integer arguments. |
+| `requires { typename std::integral_constant<int, slow(N)>; }` | [Template counter](counter/counter-requires.cpp) | Scan template arguments with `if constexpr` and fresh specialization identities. |
+
+Both counters work on GCC 16.2 in C++23. The [counter walkthrough](counter/)
+explains their code, controls, and different interfaces. Removing the builtin
+does not remove the dependence on GCC's cache. The larger applications below
+retain builtin probes; their ordinary-argument and loop-based interfaces have
+not been replaced by the template counter's approach.
 
 | Construction | What it adds | Recorded compiler evidence |
 | --- | --- | --- |
@@ -38,4 +49,5 @@ These are applications of the same storage trick. The
 [Primitive and controls](../../.agents/notes/03-compiler-state.md) ·
 [Dictionary and vector](../../.agents/notes/06-cache-memory.md) ·
 [Typed encodings](../../.agents/notes/07-typed-cache.md) ·
-[Sorting](../../.agents/notes/08-sortable-cache-vector.md)
+[Sorting](../../.agents/notes/08-sortable-cache-vector.md) ·
+[Alternative-probe evidence](../../.agents/notes/22-constantness-alternatives.md)

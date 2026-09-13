@@ -70,6 +70,14 @@ copies its location, not a snapshot of the element.
 
 ## Limits and reproduction
 
+The storage still probes `ember(...)` with `__builtin_constant_p`. The
+[counter's `requires` workaround](../counter/README.md#probe-with-requires-and-if-constexpr)
+uses template indices and fresh specializations. That does not establish a
+replacement for the ordinary values, local-handle identities, and repeated
+algorithm accesses used here. A complete sortable vector without the builtin
+has not been demonstrated; the checked source and flags below use the original
+probe.
+
 The advanced source passed locally on Ubuntu GCC 13.3.0 with:
 
 ```sh

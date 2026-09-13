@@ -18,8 +18,9 @@ the spell. Keys and values arrive as ordinary function arguments. The compiler
 does spend memory retaining its cache.
 
 `ember(key, revision, bit, 500)` warms one fact. The corresponding 520-deep
-probe recognizes a warm fact and fails on a cold one under the tested default
-limits. Positions 0–63 encode the set bits of an unsigned 64-bit value.
+`__builtin_constant_p(ember(key, revision, bit))` probe recognizes a warm fact
+and fails on a cold one under the tested default limits.
+Positions 0–63 encode the set bits of an unsigned 64-bit value.
 Position 64 marks a completed revision, including a write of zero.
 
 `remember` finds the first unmarked revision, warms its set bits, then marks it.
@@ -54,6 +55,17 @@ across compilations. The constants leave only a small margin for extra call
 depth. [Working notes](../../../.agents/notes/06-cache-memory.md) preserve the controls
 and exact source hash. This is an application of the existing cache counter,
 without a claim of historical priority.
+
+## Can this version drop the builtin?
+
+The [counter's template alternative](../counter/README.md#probe-with-requires-and-if-constexpr)
+shows that `requires` can observe the same cache through a constant template
+argument. This dictionary's keys, revisions, and bit positions instead arrive
+as ordinary function arguments and loop variables. Moving those probes into
+templates would change the interface and freshness scheme; a full dictionary
+rewrite has not been demonstrated. The source here retains the builtin.
+`std::is_constant_evaluated()` reports context, and `std::is_within_lifetime`
+reports object lifetime; neither tests recursive-call success.
 
 ## Try it
 

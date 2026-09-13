@@ -7,6 +7,12 @@ Read [AGENTS.md](../../AGENTS.md), [Pedantics](../../docs/Pedantics.md), and the
 
 ## Current state
 
+- [Constantness alternatives](22-constantness-alternatives.md): C++26 lifetime
+  queries replace the empty integer's probe on Clang and support an owning
+  one-pointer vector with a distinct final union marker. A C++23 template/type
+  requirement replaces the GCC cache counter's builtin. A template-pointer
+  span works for suitable constant objects; the original ordinary-pointer
+  interface still has no established general standard replacement.
 - New [Fine print](20-fine-print.md): function declarations run a parentheses
   parser through their exception specifications, then a generic cyclic-tag
   interpreter supplies selection, evolving memory, and recurrence. The explicit
@@ -103,6 +109,11 @@ Read [AGENTS.md](../../AGENTS.md), [Pedantics](../../docs/Pedantics.md), and the
 20. [Fine print](20-fine-print.md): bodyless computation in exception
     specifications, a parentheses parser, generic cyclic-tag machine, exact
     isolation boundary, corrected probes, cross-compiler evidence, and search trail.
+21. [Astral instrumentation](21-astral-instrumentation.md): an observed GCC
+    evaluator trace and interactive replay of sparse symbolic allocations.
+22. [Constantness alternatives](22-constantness-alternatives.md): direct
+    substitution failures, C++26 lifetime queries, sentinel vector, template
+    pointer span, builtin-free GCC counter, and compiler/library boundaries.
 
 ## State at the original handoff
 

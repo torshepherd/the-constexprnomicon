@@ -180,6 +180,12 @@ variable nor auto return-type deduction. This is a useful application of the
 existing cache storage, rather than a new independent spell. Repeated queries
 and repeated writer identities can replay old results instead of writing again.
 
+This crossover's dictionary still uses `__builtin_constant_p`. The
+[counter's template workaround](../gcc-memoization/counter/README.md#probe-with-requires-and-if-constexpr)
+demonstrates a different cache probe, but has not replaced the dictionary's
+`remember`/`recall` interface. The standalone runtime ghost above already uses
+no compiler builtins.
+
 ## Controls and compiler evidence
 
 The [separate controls](experiments/seance-controls.cpp) cover rejected overloads,
