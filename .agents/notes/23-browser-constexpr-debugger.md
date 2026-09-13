@@ -158,3 +158,19 @@ the reproducible GCC frontend port, run a tiny ordinary constant evaluation,
 then verify Astral heap and the memoization counter against native results.
 No UI implementation, compiler download/build, deployment, or live-debugger
 promise is implied by this prior-art research.
+
+## Optional follow-up: compiler activity timeline
+
+Tor added:
+
+> Awesome. I’d love to extend the research notes a tiny bit… to say that it would be awesome if we could include in this debugger a “perfetto-inspired” timeline trace of compiler activity… will be neat for showing why certain compile time programs are so slow and some faster?
+>
+> This is not essential to the core concept though at all
+
+A Perfetto-inspired, zoomable timeline could show durations and nested compiler
+activity, with source-linked evaluation attempts, cache hits/misses, and repeated
+work. Comparing traces of different implementations could help explain why one
+compile-time program is slower than another. Keep measured durations distinct
+from operation counts and account for tracing overhead when comparing timings.
+This is an optional exploration and teaching feature, not a prerequisite for
+the core debugger or the initial Wasm proof of concept.
